@@ -1,11 +1,7 @@
-
-from django.urls import path
-from app_cadastro_usuarios import views
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
-    # rota, view responsavel, nome de referencia
-    # doacao.com
-    path('', views.home, name='home'),
-    # doacao.com/cadastro
-    #path('cadastro/')
+    path('admin/', admin.site.urls),
+    path('', include('core.urls')),
 ]
