@@ -1,6 +1,6 @@
 # projeto_doacao/core/views.py
 from django.http import JsonResponse
-from .models import Familia, LocalEntrega, Usuario # Certifique-se de ter um modelo Familia
+from .models import  Familia, LocalEntrega, Usuario # Certifique-se de ter um modelo Familia
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -44,19 +44,7 @@ def cadastrar_local(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
-@csrf_exempt
-def cadastrar_familia(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        familia = Familia.objects.create(
-            nome=data['nome'],
-            telefone=data['telefone'],
-            endereco=data['endereco'],
-            pessoas_autorizadas=data['pessoas_autorizadas']
-        )
-        return JsonResponse({'message': 'Família cadastrada!'})
-    
+    return JsonResponse({'error': 'Método não permitido'}, status=405) 
 
 @csrf_exempt
 def cadastrar_usuario(request):

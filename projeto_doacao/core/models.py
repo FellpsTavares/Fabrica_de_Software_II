@@ -1,18 +1,14 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Usuario(AbstractUser):
-    # Modifique os campos groups e user_permissions
-    groups = models.ManyToManyField(
-        Group,
-        related_name="usuario_set",  # Nome para o relacionamento reverso
-        blank=True
+    TIPO_CHOICES = (
+        ('MASTER', 'Master'),
+        ('LOCAL', 'Local de Entrega'),
     )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name="usuario_permissions_set",  # Nome para o relacionamento reverso
-        blank=True
-    )
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES, default='LOCAL')
+    class Meta:
+        db_table = 'usuario'
 
 class LocalEntrega(models.Model):
     nome = models.CharField(max_length=100)
@@ -21,6 +17,8 @@ class LocalEntrega(models.Model):
 
     def __str__(self):
         return self.nome
+    class Meta:
+        db_table = 'local_entrega'
 
 class Familia(models.Model):
     nome = models.CharField(max_length=100)
@@ -30,3 +28,5 @@ class Familia(models.Model):
 
     def __str__(self):
         return self.nome
+    class Meta:
+        db_table = 'familia'

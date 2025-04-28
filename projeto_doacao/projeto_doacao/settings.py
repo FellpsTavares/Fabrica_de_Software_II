@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',  # Exemplo: se você criar um app chamado 'core'
+  
 ]
 # settings.py
 AUTH_USER_MODEL = 'core.Usuario'
@@ -59,11 +60,19 @@ TEMPLATES = [
 # WSGI
 WSGI_APPLICATION = 'projeto_doacao.wsgi.application'
 
-# Banco de dados (usando SQLite para começar)
+# Banco de dados (usando mysql para começar)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'doacao',
+        'USER': 'root',  
+        'PASSWORD': '12345', 
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
