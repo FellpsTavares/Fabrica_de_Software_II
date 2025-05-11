@@ -1,0 +1,116 @@
+/* Estrutura Principal */
+.cadastro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+}
+
+.cadastro-box {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Container dos Inputs */
+.cadastro-input-wrap {
+  position: relative;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #adadad; /* Linha cinza padrão */
+}
+
+/* Campos */
+.cadastro-input {
+  width: 100%;
+  height: 40px;
+  border: none;
+  background: transparent;
+  padding: 0 5px;
+  font-size: 15px;
+  color: #333;
+  outline: none !important; /* Remove outline */
+  box-shadow: none !important; /* Remove sombras */
+}
+
+/* Placeholder Animado */
+.cadastro-focus-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.cadastro-focus-input::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 13px;
+  left: 5px;
+  font-size: 15px;
+  color: #999;
+  transition: all 0.4s;
+}
+
+/* Linha Inferior Animada */
+.cadastro-focus-input::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #7fc98f;
+  transition: all 0.4s;
+}
+
+/* Efeitos de Foco/Preenchimento */
+.cadastro-input:focus + .cadastro-focus-input::before {
+  width: 100%;
+}
+
+.cadastro-input:focus + .cadastro-focus-input::after,
+.has-val + .cadastro-focus-input::after {
+  top: -15px;
+  font-size: 13px;
+  color: #7fc98f;
+}
+
+/* Botão */
+.cadastro-btn-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.cadastro-btn {
+  flex: 1;
+  height: 45px;
+  background: #7fc98f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.voltar-btn {
+  background: #7fc98f;
+  color: white;
+  border: 1px solid #ddd;
+}
+
+.voltar-btn:hover {
+  background: #6ab07d;
+}
+
+.cadastro-btn:hover {
+  background: #6ab07d;
+}
