@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Style//Home.css'; // Importando o arquivo CSS separado
 
 function Home() {
   const navigate = useNavigate();
@@ -25,89 +26,45 @@ function Home() {
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f4f4', minHeight: '100vh' }}>
-      {/* Navbar */}
-      <header style={{
-        backgroundColor: '#0066cc',
-        color: '#fff',
-        padding: '15px 30px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
-        <h2 style={{ margin: 0 }}>Sistema de Doações</h2>
+    <div className="home-container">
+      {/* Header */}
+      <header className="header">
+        <h2>Gerenciamento de Doações</h2>
         <div>
-          <button onClick={goToCadastro} style={buttonStyle}>Cadastrar Usuários</button>
-          <button onClick={handleLogout} style={buttonStyle}>Sair</button>
+          <button onClick={goToCadastro} className="header-button">Cadastrar Usuários</button>
+          <button onClick={handleLogout} className="header-button">Sair</button>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section style={{
-        padding: '50px 20px',
-        textAlign: 'center',
-        backgroundColor: '#e0eaff'
-      }}>
-        <h1>Bem-vindo ao Sistema de Gerenciamento de Doações</h1>
-        <p style={{ fontSize: '18px' }}>
-          Gerencie doações, famílias beneficiadas e o estoque de forma eficiente.
-        </p>
-      </section>
+      {/* Main Content */}
+      <main className="main-content">
+        <h1>Bem-vindo ao <strong>Gerenciamento de Doações</strong></h1>
+        <p className="subtitle">Facilitando o controle de entradas e saídas de doações</p>
 
-      {/* Cards de Navegação */}
-      <section style={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexWrap: 'wrap',
-        gap: '20px',
-        padding: '40px 20px'
-      }}>
-        <Card title="Cadastrar Família" onClick={goToFamilia} />
-        <Card title="Cadastrar Doações" onClick={goToDoacoes} />
-        <Card title="Visualizar Estoque" onClick={goToEstoque} />
-      </section>
+        <div className="options-grid">
+          <div className="option-card" onClick={goToCadastro}>
+            <h3>Cadastrar Usuários</h3>
+            <p>Cadastrar novos usuários</p>
+          </div>
 
-      {/* Rodapé */}
-      <footer style={{
-        textAlign: 'center',
-        padding: '20px',
-        backgroundColor: '#ccc'
-      }}>
-        &copy; 2025 Sistema de Doações. Todos os direitos reservados.
-      </footer>
+          <div className="option-card" onClick={goToFamilia}>
+            <h3>Cadastrar Família</h3>
+            <p>Registrar informações das famílias</p>
+          </div>
+
+          <div className="option-card" onClick={goToDoacoes}>
+            <h3>Entradas de Doações</h3>
+            <p>Visualizar às entradas de doações</p>
+          </div>
+
+          <div className="option-card" onClick={goToEstoque}>
+            <h3>Saídas de Doações</h3>
+            <p>Monitorar as saídas de doações</p>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
-
-// Componente de Card reutilizável
-function Card({ title, onClick }) {
-  return (
-    <div onClick={onClick} style={{
-      width: '250px',
-      backgroundColor: '#fff',
-      borderRadius: '8px',
-      padding: '30px 20px',
-      textAlign: 'center',
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      cursor: 'pointer',
-      transition: 'transform 0.2s'
-    }}
-    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-    >
-      <h3>{title}</h3>
-    </div>
-  );
-}
-
-const buttonStyle = {
-  marginLeft: '10px',
-  backgroundColor: '#004d99',
-  color: '#fff',
-  border: 'none',
-  padding: '10px 15px',
-  borderRadius: '4px',
-  cursor: 'pointer'
-};
 
 export default Home;
