@@ -2,7 +2,7 @@
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Usuario, LocalEntrega, Familia
+from .models import Usuario, LocalEntrega, Familia, PessoaAutorizada
 import json
 
 @csrf_exempt
@@ -88,3 +88,55 @@ def cadastrar_familia(request):
         return JsonResponse({'message': 'Família cadastrada com sucesso!', 'id': familia.id}, status=201)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+@csrf_exempt
+def cadastrar_pessoa_autorizada(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        familia_id = data.get('familia_id')  # Pode ser None (usará default)
+        nome = data.get('nome')
+        cpf = data.get('cpf')
+        telefone = data.get('telefone', '')  # Opcional
+
+        # Validações básicas
+        if not nome:
+            return JsonResponse({'error': 'Nome é obrigatório'}, status=400)
+        if not cpf:
+            return JsonResponse({'error': 'CPF é obrigatório'}, status=400)
+
+        # Verifica se família existe (se foi especificada)
+        familia = None
+        if familia_id:
+            try:
+                familia = Familia.objects.get(pk=familia_id)
+            except Familia.DoesNotExist:
+                return JsonResponse({'error': 'Família não encontrada'}, status=404)
+
+        # Verifica se já existe pessoa com mesmo CPF na família
+        if PessoaAutorizada.objects.filter(cpf=cpf, familia=familia).exists():
+            return JsonResponse({
+                'error': f'Já existe uma pessoa com CPF {cpf} '
+                        f'na família {familia_id if familia_id else "padrão"}'
+            }, status=400)
+
+        # Cria a pessoa
+        pessoa = PessoaAutorizada.objects.create(
+            nome=nome,
+            cpf=cpf,
+            telefone=telefone,
+            familia=familia  # Pode ser None (usará get_last_familia_pk)
+        )
+
+        return JsonResponse({
+            'message': 'Pessoa cadastrada com sucesso!',
+            'id': pessoa.id_pessoa_autorizada,  # Usando o nome correto do campo
+            'cpf': pessoa.cpf,
+            'familia_id': pessoa.familia_id
+        }, status=201)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
