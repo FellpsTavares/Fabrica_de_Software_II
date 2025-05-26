@@ -44,6 +44,7 @@ def cadastrar_local(request):
     funcionarios   = data.get('funcionarios')
     endereco       = data.get('endereco')
     coordenador    = data.get('coordenador')
+    telefone       = data.get('telefone')  # Opcional
 
     if not (nome and funcionarios and endereco and coordenador):
         return JsonResponse({'error': 'Todos os campos são obrigatórios'}, status=400)
