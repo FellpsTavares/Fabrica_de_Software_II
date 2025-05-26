@@ -17,10 +17,6 @@ function Home() {
     navigate('/CadastroFamilia');
   };
 
-  const goToLocal = () => {
-    navigate('/CadastroLocal');
-  };
-
   const goToDoacoes = () => {
     navigate('/CadastroDoacoes');
   };
@@ -35,6 +31,7 @@ function Home() {
       <header className="header">
         <h2>Gerenciamento de Doações</h2>
         <div>
+          <button onClick={goToCadastro} className="header-button">Cadastrar Usuários</button>
           <button onClick={handleLogout} className="header-button">Sair</button>
         </div>
       </header>
@@ -53,11 +50,6 @@ function Home() {
           <div className="option-card" onClick={goToFamilia}>
             <h3>Cadastrar Família</h3>
             <p>Registrar informações das famílias</p>
-          </div>
-
-          <div className="option-card" onClick={goToLocal}>
-            <h3>Cadastrar Local</h3>
-            <p>Registrar Novos Locais de retirada</p>
           </div>
 
           <div className="option-card" onClick={goToDoacoes}>

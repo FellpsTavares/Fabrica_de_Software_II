@@ -76,14 +76,11 @@ def cadastrar_familia(request):
     try:
         familia = Familia.objects.create(
             nome_familia           = data['nome_familia'],
-            nome_responsavel       = data['nome_responsavel'],
             endereco               = data['endereco'],
-            cpf_responsavel        = data['cpf_responsavel'],
             tipo_recebimento       = data.get('tipo_recebimento','estipulado'),
             renda_familia          = data['renda_familia'],
             quantidade_integrantes = data['quantidade_integrantes'],
             tipo_moradia           = data['tipo_moradia'],
-            telefone               = data['telefone'],
             status                 = data.get('status','ativo'),
         )
         return JsonResponse({'message': 'Família cadastrada com sucesso!', 'id': familia.id}, status=201)
@@ -96,10 +93,10 @@ def cadastrar_pessoa_autorizada(request):
 
     try:
         data = json.loads(request.body)
-        familia_id = data.get('familia_id')  # Pode ser None (usará default)
+        familia_id = data.get('familia_id')  
         nome = data.get('nome')
         cpf = data.get('cpf')
-        telefone = data.get('telefone', '')  # Opcional
+        telefone = data.get('telefone', '')  
 
         # Validações básicas
         if not nome:
