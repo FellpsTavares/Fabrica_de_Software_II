@@ -67,9 +67,9 @@ def cadastrar_familia(request):
         return JsonResponse({'error': 'Método não permitido'}, status=405)
 
     data = json.loads(request.body)
-    campos = ['nome_familia','nome_responsavel','endereco','cpf_responsavel',
+    campos = ['nome_familia','endereco',
               'tipo_recebimento','renda_familia','quantidade_integrantes',
-              'tipo_moradia','telefone']
+              'tipo_moradia']
     if not all(data.get(c) for c in campos):
         return JsonResponse({'error': 'Todos os campos obrigatórios devem ser enviados'}, status=400)
 
