@@ -6,7 +6,7 @@ Este projeto é um sistema web para gerenciar doações, cadastrando famílias n
 
 * **Backend:** Python com Django
 * **Frontend:** React
-* **Banco de Dados:** (Não especificado nos arquivos, mas Django geralmente usa PostgreSQL, MySQL, SQLite ou Oracle)
+* **Banco de Dados:**  MySQL
 * **Outras bibliotecas/ferramentas:**
     * Axios (para requisições HTTP no frontend)
     * React Router DOM (para gerenciamento de rotas no frontend)
