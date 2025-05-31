@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Style/CadastroResponsavel.css'; // Importa o CSS correspondente
 import fundo from './Assets/Fundo.png'; // Reutiliza o fundo se aplicável
+import axios from 'axios';
 
 function CadastroResponsavel() {
   const navigate = useNavigate();
@@ -29,22 +30,22 @@ function CadastroResponsavel() {
     };
 
     console.log("Dados a enviar:", dadosParaEnviar);
-    alert("Dados do responsável (ver console):");
+    // alert("Dados do responsável (ver console):");
 
-    // try {
-    //   // Substitua pelo endpoint correto da sua API
-    //   const res = await axios.post(
-    //     'http://127.0.0.1:8000/cadastrar_responsavel/', 
-    //     dadosParaEnviar,
-    //     { headers: { 'Content-Type': 'application/json' } }
-    //   );
-    //   alert(res.data.message || 'Responsável cadastrado com sucesso!');
-    //   navigate('/alguma-rota-apos-sucesso'); // Defina a rota de destino
-    // } catch (err) {
-    //   console.error('Erro ao cadastrar responsável:', err.response?.data || err.message);
-    //   alert('Erro: ' + (err.response?.data?.error || err.message));
-    // }
-  };
+     try {
+      // Substitua pelo endpoint correto da sua API
+      const res = await axios.post(
+        'http://127.0.0.1:8000/cadastrar_pessoa_autorizada/', 
+        dadosParaEnviar,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      alert(res.data.message || 'Responsável cadastrado com sucesso!');
+      navigate('/alguma-rota-apos-sucesso'); // Defina a rota de destino
+    } catch (err) {
+      console.error('Erro ao cadastrar responsável:', err.response?.data || err.message);
+      alert('Erro: ' + (err.response?.data?.error || err.message));
+    }
+  }
 
   return (
     <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>

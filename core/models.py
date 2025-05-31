@@ -78,13 +78,6 @@ class Familia(models.Model):
     def __str__(self):
         return self.nome_familia
 
-def get_last_familia_pk():
-    """
-    Retorna o PK da última família cadastrada ou None.
-    """
-    last = Familia.objects.order_by('-pk').first()
-    return last.pk if last else None
-
 class PessoaAutorizada(models.Model):
     id_pessoa_autorizada = models.AutoField(
         primary_key=True,
@@ -93,14 +86,7 @@ class PessoaAutorizada(models.Model):
     nome     = models.CharField(max_length=100)
     cpf      = models.CharField(max_length=14)
     telefone = models.CharField(max_length=30, null=True, blank=True)
-    familia  = models.ForeignKey(
-        'Familia',
-        related_name='pessoas_autorizadas',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        default=get_last_familia_pk
-    )
+    familia = models.ForeignKey(Familia, on_delete=models.CASCADE, related_name='pessoas_autorizadas')
 
     class Meta:
         db_table = 'pessoa_autorizada'

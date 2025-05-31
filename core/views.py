@@ -104,19 +104,23 @@ def cadastrar_pessoa_autorizada(request):
         if not cpf:
             return JsonResponse({'error': 'CPF é obrigatório'}, status=400)
 
-        # Verifica se família existe (se foi especificada)
+        # Busca a família: se não vier familia_id, pega a última cadastrada
         familia = None
         if familia_id:
             try:
                 familia = Familia.objects.get(pk=familia_id)
             except Familia.DoesNotExist:
                 return JsonResponse({'error': 'Família não encontrada'}, status=404)
+        else:
+            familia = Familia.objects.order_by('-id').first()
+            if not familia:
+                return JsonResponse({'error': 'Nenhuma família cadastrada'}, status=404)
 
         # Verifica se já existe pessoa com mesmo CPF na família
         if PessoaAutorizada.objects.filter(cpf=cpf, familia=familia).exists():
             return JsonResponse({
                 'error': f'Já existe uma pessoa com CPF {cpf} '
-                        f'na família {familia_id if familia_id else "padrão"}'
+                        f'na família {familia.id if familia else "padrão"}'
             }, status=400)
 
         # Cria a pessoa
@@ -124,12 +128,12 @@ def cadastrar_pessoa_autorizada(request):
             nome=nome,
             cpf=cpf,
             telefone=telefone,
-            familia=familia  # Pode ser None (usará get_last_familia_pk)
+            familia=familia
         )
 
         return JsonResponse({
             'message': 'Pessoa cadastrada com sucesso!',
-            'id': pessoa.id_pessoa_autorizada,  # Usando o nome correto do campo
+            'id': pessoa.id_pessoa_autorizada,
             'cpf': pessoa.cpf,
             'familia_id': pessoa.familia_id
         }, status=201)
