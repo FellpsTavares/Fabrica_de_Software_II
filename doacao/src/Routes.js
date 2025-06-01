@@ -9,6 +9,7 @@ import CadastroLocal from "./CadastroLocal";
 // *** ADICIONE A IMPORTAÇÃO DO NOVO COMPONENTE AQUI ***
 import CadastroResponsavel from "./CadastroResponsavel"; // Certifique-se que o caminho está correto
 import CadastroDoacoes from "./CadastroDoacoes";
+import CadastroMembroFamiliar from "./CadastroMembroFamiliar";
 
 const AppRoutes = () => {
   // Mantém a lógica de autenticação como estava
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/CadastroLocal" element={isAuthenticated ? <CadastroLocal /> : <Navigate to="/" replace />} />
         <Route path="/cadastroResponsavel" element={isAuthenticated ? <CadastroResponsavel /> : <Navigate to="/" replace />} />
         <Route path="/cadastroDoacoes" element={isAuthenticated ? <CadastroDoacoes /> : <Navigate to="/" replace />} />
+        <Route path="/cadastroMembroFamiliar" element={isAuthenticated ? <CadastroMembroFamiliar /> : <Navigate to="/" replace />} />
         
       </Routes>
     </BrowserRouter>

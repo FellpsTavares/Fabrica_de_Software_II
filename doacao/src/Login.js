@@ -15,15 +15,27 @@ function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // Simulação de login bem-sucedido
-    if (email && password) {
-      setIsAuthenticated(true);
-      navigate('/home');
-    } else {
+    if (!email || !password) {
       alert('Preencha email e senha!');
+      return;
+    }
+    try {
+      const res = await fetch('http://127.0.0.1:8000/login_usuario/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsAuthenticated(true);
+        navigate('/home');
+      } else {
+        alert(data.error || 'Usuário ou senha inválidos!');
+      }
+    } catch (err) {
+      alert('Erro ao tentar logar: ' + err.message);
     }
   };
 

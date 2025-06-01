@@ -7,8 +7,7 @@ class Usuario(AbstractUser):
         ('COORDENADOR', 'Coordenador'),
         ('OPERACAO', 'Operacional'),
     )
-    # força o Django a usar o campo `id_usuario` no banco como seu `id` interno
-    id = models.AutoField(primary_key=True, db_column='id_usuario')
+    id = models.AutoField(primary_key=True)  # Removido db_column='id_usuario'
 
     nome_usuario = models.CharField("Nome", max_length=80)
     username = models.CharField("Login", max_length=20, unique=True)
@@ -78,19 +77,22 @@ class Familia(models.Model):
     def __str__(self):
         return self.nome_familia
 
-class PessoaAutorizada(models.Model):
-    id_pessoa_autorizada = models.AutoField(
-        primary_key=True,
-        db_column='id_pessoa_autorizada'
-    )
-    nome     = models.CharField(max_length=100)
-    cpf      = models.CharField(max_length=14)
-    telefone = models.CharField(max_length=30, null=True, blank=True)
-    familia = models.ForeignKey(Familia, on_delete=models.CASCADE, related_name='pessoas_autorizadas')
+class MembroFamiliar(models.Model):
+    id_membro = models.AutoField(primary_key=True, db_column='id_membro')
+    nome = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=14)
+    data_nascimento = models.DateField()
+    familia = models.ForeignKey(Familia, on_delete=models.CASCADE, related_name='membros')
+    pode_receber = models.BooleanField(default=False)
 
     class Meta:
-        db_table = 'pessoa_autorizada'
+        db_table = 'membro_familiar'
+        verbose_name = 'Membro Familiar'
+        verbose_name_plural = 'Membros Familiares'
         unique_together = ('cpf', 'familia')
+
+    def __str__(self):
+        return self.nome
 
 class Produto(models.Model):
     id_produto = models.AutoField(primary_key=True, db_column='id_produto')

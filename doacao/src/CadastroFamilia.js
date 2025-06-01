@@ -49,7 +49,7 @@ function CadastroFamilia() {
       alert(res.data.message || 'Família cadastrada com sucesso!');
       
       // Redireciona para CadastroResponsavel após sucesso
-      navigate('/cadastroResponsavel'); 
+      navigate('/cadastroMembroFamiliar'); 
 
     } catch (err) {
       console.error('Erro ao cadastrar família:', err.response?.data || err.message);

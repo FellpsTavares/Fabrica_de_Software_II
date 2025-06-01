@@ -2,7 +2,7 @@
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Usuario, LocalEntrega, Familia, PessoaAutorizada
+from .models import Usuario, LocalEntrega, Familia, MembroFamiliar
 import json
 
 @csrf_exempt
@@ -164,5 +164,55 @@ def cadastrar_produto(request):
             unidade_medida=unidade_medida
         )
         return JsonResponse({'message': 'Produto cadastrado com sucesso!', 'id': produto.id_produto}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def cadastrar_membro_familiar(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        cpf = data.get('cpf')
+        data_nascimento = data.get('data_nascimento')
+        pode_receber = data.get('pode_receber', False)
+
+        if not (nome and cpf and data_nascimento):
+            return JsonResponse({'error': 'Todos os campos obrigatórios devem ser enviados'}, status=400)
+
+        # Busca a última família cadastrada
+        familia = Familia.objects.order_by('-id').first()
+        if not familia:
+            return JsonResponse({'error': 'Nenhuma família cadastrada'}, status=404)
+
+        from .models import MembroFamiliar
+        membro = MembroFamiliar.objects.create(
+            nome=nome,
+            cpf=cpf,
+            data_nascimento=data_nascimento,
+            familia=familia,
+            pode_receber=bool(pode_receber)
+        )
+        return JsonResponse({'message': 'Membro cadastrado com sucesso!', 'id': membro.id_membro}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def login_usuario(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        if not username or not password:
+            return JsonResponse({'error': 'Usuário e senha são obrigatórios'}, status=400)
+        from django.contrib.auth import authenticate
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            return JsonResponse({'message': 'Login realizado com sucesso!', 'id': user.id, 'nome': user.nome_usuario, 'tipo': user.tipo_usuario}, status=200)
+        else:
+            return JsonResponse({'error': 'Usuário ou senha inválidos'}, status=401)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
