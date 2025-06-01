@@ -91,3 +91,17 @@ class PessoaAutorizada(models.Model):
     class Meta:
         db_table = 'pessoa_autorizada'
         unique_together = ('cpf', 'familia')
+
+class Produto(models.Model):
+    id_produto = models.AutoField(primary_key=True, db_column='id_produto')
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField(blank=True, null=True)
+    unidade_medida = models.CharField(max_length=20)
+
+    class Meta:
+        db_table = 'produto'
+        verbose_name = 'Produto'
+        verbose_name_plural = 'Produtos'
+
+    def __str__(self):
+        return self.nome

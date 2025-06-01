@@ -142,3 +142,27 @@ def cadastrar_pessoa_autorizada(request):
         return JsonResponse({'error': 'JSON inválido'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+@csrf_exempt
+def cadastrar_produto(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        descricao = data.get('descricao', '')
+        unidade_medida = data.get('unidade_medida')
+
+        if not nome or not unidade_medida:
+            return JsonResponse({'error': 'Nome e unidade de medida são obrigatórios'}, status=400)
+
+        from .models import Produto
+        produto = Produto.objects.create(
+            nome=nome,
+            descricao=descricao,
+            unidade_medida=unidade_medida
+        )
+        return JsonResponse({'message': 'Produto cadastrado com sucesso!', 'id': produto.id_produto}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
