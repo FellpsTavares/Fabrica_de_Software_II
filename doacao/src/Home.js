@@ -25,8 +25,8 @@ function Home() {
     navigate('/CadastroDoacoes');
   };
 
-  const goToEstoque = () => {
-    navigate('/Estoque');
+  const goToSaidaDoacao = () => {
+    navigate('/saidaDoacao');
   };
 
   return (
@@ -65,9 +65,9 @@ function Home() {
             <p>Visualizar às entradas de doações</p>
           </div>
 
-          <div className="option-card" onClick={goToEstoque}>
+          <div className="option-card" onClick={goToSaidaDoacao}>
             <h3>Saídas de Doações</h3>
-            <p>Monitorar as saídas de doações</p>
+            <p>Registrar retirada de doações</p>
           </div>
         </div>
       </main>

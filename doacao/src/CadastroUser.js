@@ -13,7 +13,8 @@ function CadastroUser() {
     nome: '',
     email: '',
     senha: '',
-    confirmarSenha: ''
+    confirmarSenha: '',
+    nome_local: ''
   });
 
   const handleChange = (e) => {
@@ -34,10 +35,10 @@ function CadastroUser() {
       // prepara o payload conforme o seu view espera
       const payload = {
         nome_usuario: form.nome,
-        username:     form.nome,    // aqui abaixo você pode usar form.email ou outro
-        senha:        form.senha,
-        email:        form.email,
-        // tipo_usuario: 'OPERACAO'  // se quiser forçar outro tipo
+        username: form.nome, // ou outro campo para login
+        senha: form.senha,
+        email: form.email,
+        nome_local: form.nome_local
       };
 
       // faz a requisição ao backend
@@ -108,6 +109,19 @@ function CadastroUser() {
               className={`cadastro-input ${form.confirmarSenha ? 'has-val' : ''}`}
             />
             <span className="cadastro-focus-input" data-placeholder="Confirmar Senha"></span>
+          </div>
+
+          {/* Nome do Local de Trabalho */}
+          <div className="cadastro-input-wrap">
+            <input
+              type="text"
+              name="nome_local"
+              value={form.nome_local}
+              onChange={handleChange}
+              className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
+              required
+            />
+            <span className="cadastro-focus-input" data-placeholder="Local de Trabalho (nome do local)"></span>
           </div>
 
           <div className="cadastro-btn-container">

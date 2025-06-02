@@ -7,26 +7,39 @@ class Usuario(AbstractUser):
         ('COORDENADOR', 'Coordenador'),
         ('OPERACAO', 'Operacional'),
     )
-    id = models.AutoField(primary_key=True)  # Removido db_column='id_usuario'
-
+    id = models.AutoField(primary_key=True)
     nome_usuario = models.CharField("Nome", max_length=80)
     username = models.CharField("Login", max_length=20, unique=True)
     email = models.EmailField("E-mail", max_length=50, unique=True)
     tipo_usuario = models.CharField(
         "Tipo", max_length=20, choices=TIPO_CHOICES, default='OPERACAO'
     )
+    local = models.ForeignKey('LocalEntrega', on_delete=models.PROTECT, db_column='id_local_entrega', to_field='id', null=False)
 
     class Meta:
         db_table = 'usuario'
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
 
+class Estoque(models.Model):
+    id_estoque = models.AutoField(primary_key=True, db_column='id_estoque')
+    nome = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = 'estoque'
+        verbose_name = 'Estoque'
+        verbose_name_plural = 'Estoques'
+
+    def __str__(self):
+        return self.nome
+
 class LocalEntrega(models.Model):
+    id = models.AutoField(primary_key=True, db_column='id_local_entrega')
     nome_local = models.CharField("Nome do Local", max_length=50)
     funcionarios = models.CharField("Funcionários", max_length=150)
     endereco = models.CharField("Endereço", max_length=150)
     coordenador = models.CharField("Coordenador", max_length=80)
-    telefone = models.CharField("Telefone", max_length=20,null=True, blank=True)
+    telefone = models.CharField("Telefone", max_length=20, null=True, blank=True)
 
     class Meta:
         db_table = 'local'
@@ -35,6 +48,12 @@ class LocalEntrega(models.Model):
 
     def __str__(self):
         return self.nome_local
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            Estoque.objects.create(nome=self.nome_local)
 
 class Familia(models.Model):
       # sobrescreve a pk-padrão para usar id_familia
@@ -107,3 +126,33 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+
+class DistribuicaoProduto(models.Model):
+    id_distribuicao = models.AutoField(primary_key=True, db_column='id_distribuicao')
+    membro = models.ForeignKey('MembroFamiliar', on_delete=models.CASCADE, db_column='membro_id', to_field='id_membro')
+    estoque = models.ForeignKey('Estoque', on_delete=models.CASCADE, db_column='estoque_id', to_field='id_estoque')
+    usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, db_column='usuario_id', to_field='id')
+    produto = models.ForeignKey('Produto', on_delete=models.CASCADE, db_column='produto_id', to_field='id_produto')
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2)
+    data_distribuicao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'distribuicao_produto'
+        verbose_name = 'Distribuição de Produto'
+        verbose_name_plural = 'Distribuições de Produto'
+
+class MovimentacaoEstoque(models.Model):
+    id_movimentacao = models.AutoField(primary_key=True, db_column='id_movimentacao')
+    produto = models.ForeignKey('Produto', on_delete=models.CASCADE, db_column='produto_id', to_field='id_produto')
+    usuario = models.ForeignKey('Usuario', on_delete=models.CASCADE, db_column='usuario_id', to_field='id')
+    estoque_origem = models.ForeignKey('Estoque', on_delete=models.SET_NULL, null=True, blank=True, db_column='estoque_origem_id', to_field='id_estoque', related_name='movimentacoes_saida')
+    estoque_destino = models.ForeignKey('Estoque', on_delete=models.SET_NULL, null=True, blank=True, db_column='estoque_destino_id', to_field='id_estoque', related_name='movimentacoes_entrada')
+    tipo_movimentacao = models.CharField(max_length=10)
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2)
+    data_movimentacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'movimentacao_estoque'
+        verbose_name = 'Movimentação de Estoque'
+        verbose_name_plural = 'Movimentações de Estoque'
+

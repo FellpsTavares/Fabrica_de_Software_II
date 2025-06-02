@@ -16,15 +16,21 @@ def cadastrar_usuario(request):
     senha   = data.get('senha')
     email   = data.get('email')
     tipo    = data.get('tipo_usuario', 'OPERACAO')
+    nome_local = data.get('nome_local')
 
-    if not (nome and login and senha and email):
-        return JsonResponse({'error': 'nome_usuario, username, senha e email são obrigatórios'}, status=400)
+    if not (nome and login and senha and email and nome_local):
+        return JsonResponse({'error': 'nome_usuario, username, senha, email e nome_local são obrigatórios'}, status=400)
 
     try:
+        # Busca local por nome (case insensitive, contém)
+        local = LocalEntrega.objects.filter(nome_local__icontains=nome_local).first()
+        if not local:
+            return JsonResponse({'error': 'Local de retirada não encontrado'}, status=404)
         user = Usuario.objects.create_user(
             username=login,
             email=email,
             password=senha,
+            local=local
         )
         user.nome_usuario = nome
         user.tipo_usuario = tipo
@@ -54,7 +60,8 @@ def cadastrar_local(request):
             nome_local=nome,
             funcionarios=funcionarios,
             endereco=endereco,
-            coordenador=coordenador
+            coordenador=coordenador,
+            telefone=telefone if telefone else ''
         )
         return JsonResponse({'message': 'Local de entrega cadastrado com sucesso!', 'id': local.id}, status=201)
     except Exception as e:
@@ -87,63 +94,7 @@ def cadastrar_familia(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 @csrf_exempt
-def cadastrar_pessoa_autorizada(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-    try:
-        data = json.loads(request.body)
-        familia_id = data.get('familia_id')  
-        nome = data.get('nome')
-        cpf = data.get('cpf')
-        telefone = data.get('telefone', '')  
-
-        # Validações básicas
-        if not nome:
-            return JsonResponse({'error': 'Nome é obrigatório'}, status=400)
-        if not cpf:
-            return JsonResponse({'error': 'CPF é obrigatório'}, status=400)
-
-        # Busca a família: se não vier familia_id, pega a última cadastrada
-        familia = None
-        if familia_id:
-            try:
-                familia = Familia.objects.get(pk=familia_id)
-            except Familia.DoesNotExist:
-                return JsonResponse({'error': 'Família não encontrada'}, status=404)
-        else:
-            familia = Familia.objects.order_by('-id').first()
-            if not familia:
-                return JsonResponse({'error': 'Nenhuma família cadastrada'}, status=404)
-
-        # Verifica se já existe pessoa com mesmo CPF na família
-        if PessoaAutorizada.objects.filter(cpf=cpf, familia=familia).exists():
-            return JsonResponse({
-                'error': f'Já existe uma pessoa com CPF {cpf} '
-                        f'na família {familia.id if familia else "padrão"}'
-            }, status=400)
-
-        # Cria a pessoa
-        pessoa = PessoaAutorizada.objects.create(
-            nome=nome,
-            cpf=cpf,
-            telefone=telefone,
-            familia=familia
-        )
-
-        return JsonResponse({
-            'message': 'Pessoa cadastrada com sucesso!',
-            'id': pessoa.id_pessoa_autorizada,
-            'cpf': pessoa.cpf,
-            'familia_id': pessoa.familia_id
-        }, status=201)
-
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'JSON inválido'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
-@csrf_exempt
 def cadastrar_produto(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
@@ -216,3 +167,79 @@ def login_usuario(request):
             return JsonResponse({'error': 'Usuário ou senha inválidos'}, status=401)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def cadastrar_movimentacao_estoque(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        from .models import MovimentacaoEstoque, Produto, Usuario, Estoque
+        data = json.loads(request.body)
+        produto_id = data.get('produto_id')
+        usuario_id = data.get('usuario_id')
+        estoque_origem_id = data.get('estoque_origem_id')
+        estoque_destino_id = data.get('estoque_destino_id')
+        tipo_movimentacao = data.get('tipo_movimentacao')
+        quantidade = data.get('quantidade')
+        if not (produto_id and usuario_id and tipo_movimentacao and quantidade):
+            return JsonResponse({'error': 'Campos obrigatórios faltando'}, status=400)
+        movimentacao = MovimentacaoEstoque.objects.create(
+            produto_id=produto_id,
+            usuario_id=usuario_id,
+            estoque_origem_id=estoque_origem_id,
+            estoque_destino_id=estoque_destino_id,
+            tipo_movimentacao=tipo_movimentacao,
+            quantidade=quantidade
+        )
+        return JsonResponse({'message': 'Movimentação registrada com sucesso!', 'id': movimentacao.id_movimentacao}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def cadastrar_distribuicao_produto(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        from .models import DistribuicaoProduto, MembroFamiliar, Estoque, Usuario, Produto
+        data = json.loads(request.body)
+        membro_id = data.get('membro_id')
+        estoque_id = data.get('estoque_id')
+        usuario_id = data.get('usuario_id')
+        produto_id = data.get('produto_id')
+        quantidade = data.get('quantidade')
+        # if not (membro_id and estoque_id and usuario_id and produto_id and quantidade):
+        #     return JsonResponse({'error': 'Campos obrigatórios faltando'}, status=400)
+        distribuicao = DistribuicaoProduto.objects.create(
+            membro_id=membro_id,
+            estoque_id=estoque_id,
+            usuario_id=usuario_id,
+            produto_id=produto_id,
+            quantidade=quantidade
+        )
+        return JsonResponse({'message': 'Distribuição registrada com sucesso!', 'id': distribuicao.id_distribuicao}, status=201)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def buscar_membro_por_cpf(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        cpf = data.get('cpf')
+        if not cpf:
+            return JsonResponse({'error': 'CPF não informado'}, status=400)
+        membro = MembroFamiliar.objects.filter(cpf=cpf, pode_receber=True).first()
+        if not membro:
+            return JsonResponse({'error': 'CPF não encontrado ou não autorizado'}, status=404)
+        return JsonResponse({'id_membro': membro.id_membro, 'nome': membro.nome}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def listar_produtos(request):
+    from .models import Produto
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    produtos = Produto.objects.all().values('id_produto', 'nome')
+    return JsonResponse(list(produtos), safe=False)
