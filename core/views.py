@@ -103,16 +103,34 @@ def cadastrar_produto(request):
         data = json.loads(request.body)
         nome = data.get('nome')
         descricao = data.get('descricao', '')
-        unidade_medida = data.get('unidade_medida')
+        unidade_id = data.get('unidade_id')
+        quantidade = data.get('quantidade', 0)
+        estoque_destino_id = data.get('estoque_destino_id', 1)  # Padrão: 1
+        usuario_id = data.get('usuario_id', 1)  # Padrão: 1 (ajuste para pegar do usuário logado)
 
-        if not nome or not unidade_medida:
+        if not nome or not unidade_id:
             return JsonResponse({'error': 'Nome e unidade de medida são obrigatórios'}, status=400)
 
-        from .models import Produto
+        from .models import Produto, UnidadeMedida, MovimentacaoEstoque
+        try:
+            unidade_medida = UnidadeMedida.objects.get(id_unidade=unidade_id)
+        except UnidadeMedida.DoesNotExist:
+            return JsonResponse({'error': 'Unidade de medida não encontrada'}, status=404)
+
         produto = Produto.objects.create(
             nome=nome,
             descricao=descricao,
-            unidade_medida=unidade_medida
+            unidade_medida=unidade_medida,
+            quantidade=quantidade
+        )
+        # Cria movimentação de estoque (entrada)
+        MovimentacaoEstoque.objects.create(
+            produto_id=produto.id_produto,
+            usuario_id=usuario_id,
+            tipo_movimentacao='entrada',
+            quantidade=quantidade,
+            estoque_destino_id=estoque_destino_id,
+            estoque_origem_id=None
         )
         return JsonResponse({'message': 'Produto cadastrado com sucesso!', 'id': produto.id_produto}, status=201)
     except Exception as e:
@@ -200,11 +218,11 @@ def cadastrar_distribuicao_produto(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
     try:
-        from .models import DistribuicaoProduto, MembroFamiliar, Estoque, Usuario, Produto
+        from .models import DistribuicaoProduto, MovimentacaoEstoque
         data = json.loads(request.body)
         membro_id = data.get('membro_id')
         estoque_id = data.get('estoque_id')
-        usuario_id = data.get('usuario_id')
+        usuario_id = data.get('usuario_id', 1)  # Padrão: 1 (ajuste para pegar do usuário logado)
         produto_id = data.get('produto_id')
         quantidade = data.get('quantidade')
         # if not (membro_id and estoque_id and usuario_id and produto_id and quantidade):
@@ -215,6 +233,15 @@ def cadastrar_distribuicao_produto(request):
             usuario_id=usuario_id,
             produto_id=produto_id,
             quantidade=quantidade
+        )
+        # Cria movimentação de estoque (saida)
+        MovimentacaoEstoque.objects.create(
+            produto_id=produto_id,
+            usuario_id=usuario_id,
+            tipo_movimentacao='saida',
+            quantidade=quantidade,
+            estoque_origem_id=estoque_id,
+            estoque_destino_id=None
         )
         return JsonResponse({'message': 'Distribuição registrada com sucesso!', 'id': distribuicao.id_distribuicao}, status=201)
     except Exception as e:
@@ -243,3 +270,74 @@ def listar_produtos(request):
         return JsonResponse({'error': 'Método não permitido'}, status=405)
     produtos = Produto.objects.all().values('id_produto', 'nome')
     return JsonResponse(list(produtos), safe=False)
+
+@csrf_exempt
+def cadastrar_unidade_medida(request):
+    from .models import UnidadeMedida
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        if not nome:
+            return JsonResponse({'error': 'Nome da unidade é obrigatório'}, status=400)
+        unidade, created = UnidadeMedida.objects.get_or_create(nome=nome)
+        if created:
+            return JsonResponse({'message': 'Unidade cadastrada com sucesso!', 'id': unidade.id_unidade}, status=201)
+        else:
+            return JsonResponse({'message': 'Unidade já existe!', 'id': unidade.id_unidade}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def listar_unidades_medida(request):
+    from .models import UnidadeMedida
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    unidades = UnidadeMedida.objects.all().values('id_unidade', 'nome')
+    return JsonResponse(list(unidades), safe=False)
+
+@csrf_exempt
+def excluir_unidade_medida(request, id_unidade):
+    from .models import UnidadeMedida
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        unidade = UnidadeMedida.objects.get(pk=id_unidade)
+        unidade.delete()
+        return JsonResponse({'message': 'Unidade excluída com sucesso!'}, status=200)
+    except UnidadeMedida.DoesNotExist:
+        return JsonResponse({'error': 'Unidade não encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def listar_movimentacoes_estoque(request):
+    from .models import MovimentacaoEstoque, Produto, Usuario, DistribuicaoProduto, MembroFamiliar, UnidadeMedida
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    movimentacoes = MovimentacaoEstoque.objects.select_related('produto__unidade_medida', 'usuario', 'estoque_origem', 'estoque_destino')
+    entradas = []
+    saidas = []
+    for mov in movimentacoes:
+        unidade_nome = mov.produto.unidade_medida.nome if mov.produto and mov.produto.unidade_medida else ''
+        mov_dict = {
+            'id_movimentacao': mov.id_movimentacao,
+            'produto_nome': mov.produto.nome if mov.produto else '-',
+            'usuario_nome': mov.usuario.nome_usuario if hasattr(mov.usuario, 'nome_usuario') else str(mov.usuario),
+            'quantidade': float(mov.quantidade),
+            'unidade_nome': unidade_nome,
+            'data_movimentacao': mov.data_movimentacao,
+            'tipo_movimentacao': mov.tipo_movimentacao,
+            'membro_nome': None
+        }
+        if mov.tipo_movimentacao == 'entrada':
+            entradas.append(mov_dict)
+        else:
+            membro_nome = None
+            dist = DistribuicaoProduto.objects.filter(produto_id=mov.produto.id_produto, quantidade=mov.quantidade, usuario_id=mov.usuario.id).order_by('-data_distribuicao').first()
+            if dist and dist.membro:
+                membro_nome = dist.membro.nome
+            mov_dict['membro_nome'] = membro_nome
+            saidas.append(mov_dict)
+    return JsonResponse({'entradas': entradas, 'saidas': saidas}, safe=False)

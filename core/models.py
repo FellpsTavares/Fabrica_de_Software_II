@@ -113,11 +113,24 @@ class MembroFamiliar(models.Model):
     def __str__(self):
         return self.nome
 
+class UnidadeMedida(models.Model):
+    id_unidade = models.AutoField(primary_key=True, db_column='id_unidade')
+    nome = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        db_table = 'unidade_medida'
+        verbose_name = 'Unidade de Medida'
+        verbose_name_plural = 'Unidades de Medida'
+
+    def __str__(self):
+        return self.nome
+
 class Produto(models.Model):
     id_produto = models.AutoField(primary_key=True, db_column='id_produto')
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
-    unidade_medida = models.CharField(max_length=20)
+    unidade_medida = models.ForeignKey('UnidadeMedida', on_delete=models.PROTECT, db_column='unidade_id', to_field='id_unidade')
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # NOVO CAMPO
 
     class Meta:
         db_table = 'produto'

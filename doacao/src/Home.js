@@ -29,6 +29,10 @@ function Home() {
     navigate('/saidaDoacao');
   };
 
+  const goToEstoque = () => {
+    navigate('/estoque');
+  };
+
   return (
     <div className="home-container">
       {/* Header */}
@@ -68,6 +72,11 @@ function Home() {
           <div className="option-card" onClick={goToSaidaDoacao}>
             <h3>Saídas de Doações</h3>
             <p>Registrar retirada de doações</p>
+          </div>
+
+          <div className="option-card" onClick={goToEstoque}>
+            <h3>Visualizar Estoque</h3>
+            <p>Consultar movimentações de estoque</p>
           </div>
         </div>
       </main>

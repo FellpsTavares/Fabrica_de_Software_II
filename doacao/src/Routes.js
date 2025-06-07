@@ -11,6 +11,8 @@ import CadastroResponsavel from "./CadastroResponsavel"; // Certifique-se que o 
 import CadastroDoacoes from "./CadastroDoacoes";
 import CadastroMembroFamiliar from "./CadastroMembroFamiliar";
 import CadastroSaidaDoacao from "./CadastroSaidaDoacao";
+import UnidadesMedida from './UnidadesMedida';
+import Estoque from './Estoque';
 
 const AppRoutes = () => {
   // Mantém a lógica de autenticação como estava
@@ -35,6 +37,8 @@ const AppRoutes = () => {
         <Route path="/cadastroDoacoes" element={isAuthenticated ? <CadastroDoacoes /> : <Navigate to="/" replace />} />
         <Route path="/cadastroMembroFamiliar" element={isAuthenticated ? <CadastroMembroFamiliar /> : <Navigate to="/" replace />} />
         <Route path="/saidaDoacao" element={isAuthenticated ? <CadastroSaidaDoacao /> : <Navigate to="/" replace />} />
+        <Route path="/unidades-medida" element={<UnidadesMedida />} />
+        <Route path="/estoque" element={isAuthenticated ? <Estoque /> : <Navigate to="/" replace />} />
         
       </Routes>
     </BrowserRouter>
