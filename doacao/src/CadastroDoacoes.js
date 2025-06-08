@@ -11,15 +11,21 @@ function CadastroDoacoes() {
     nome: '',
     descricao: '',
     unidade_id: '',
-    quantidade: ''
+    quantidade: '',
+    produto_id: ''
   });
   const [unidades, setUnidades] = useState([]);
+  const [produtos, setProdutos] = useState([]);
   const [showUnidadeModal, setShowUnidadeModal] = useState(false);
+  const [modo, setModo] = useState('novo'); // 'novo' ou 'entrada'
 
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/listar_unidades_medida/')
       .then(res => setUnidades(res.data))
       .catch(() => setUnidades([]));
+    axios.get('http://127.0.0.1:8000/listar_produtos/')
+      .then(res => setProdutos(res.data))
+      .catch(() => setProdutos([]));
   }, [showUnidadeModal]); // Atualiza ao fechar modal
 
   const handleChange = (e) => {
@@ -29,22 +35,47 @@ function CadastroDoacoes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Monta o JSON correto
-    const payload = {
-      nome: form.nome,
-      descricao: form.descricao,
-      unidade_id: Number(form.unidade_id),
-      quantidade: Number(form.quantidade)
-    };
-    try {
-      const res = await axios.post('http://127.0.0.1:8000/cadastrar_produto/', payload, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      alert(res.data.message || 'Produto cadastrado com sucesso!');
-      setForm({ nome: '', descricao: '', unidade_id: '', quantidade: '' });
-      navigate('/home');
-    } catch (err) {
-      alert('Erro: ' + (err.response?.data?.error || err.message));
+    if (modo === 'novo') {
+      // Monta o JSON correto para novo produto
+      const payload = {
+        nome: form.nome,
+        descricao: form.descricao,
+        unidade_id: Number(form.unidade_id),
+        quantidade: Number(form.quantidade)
+      };
+      try {
+        const res = await axios.post('http://127.0.0.1:8000/cadastrar_produto/', payload, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        alert(res.data.message || 'Produto cadastrado com sucesso!');
+        setForm({ nome: '', descricao: '', unidade_id: '', quantidade: '', produto_id: '' });
+        navigate('/home');
+      } catch (err) {
+        alert('Erro: ' + (err.response?.data?.error || err.message));
+      }
+    } else {
+      // Adicionar quantidade a produto existente
+      if (!form.produto_id || !form.quantidade) {
+        alert('Selecione o produto e informe a quantidade!');
+        return;
+      }
+      try {
+        const payload = {
+          produto_id: Number(form.produto_id),
+          quantidade: Number(form.quantidade),
+          tipo_movimentacao: 'entrada',
+          usuario_id: 1, // TODO: pegar do usuário logado
+          estoque_destino_id: 1 // TODO: selecionar estoque
+        };
+        await axios.post('http://127.0.0.1:8000/cadastrar_movimentacao_estoque/', payload, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+        alert('Quantidade adicionada com sucesso!');
+        setForm({ nome: '', descricao: '', unidade_id: '', quantidade: '', produto_id: '' });
+        navigate('/home');
+      } catch (err) {
+        alert('Erro: ' + (err.response?.data?.error || err.message));
+      }
     }
   };
 
@@ -52,67 +83,105 @@ function CadastroDoacoes() {
     <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>
       <div className="cadastro-box">
         <form onSubmit={handleSubmit} className="cadastro-form">
-          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Cadastro de Produto</h2>
-          <div className="cadastro-input-wrap">
-            <input
-              type="text"
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-              className={`cadastro-input ${form.nome ? 'has-val' : ''}`}
-              required
-            />
-            <span className="cadastro-focus-input" data-placeholder="Nome do Produto"></span>
+          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Cadastro/Entrada de Produto</h2>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 16, justifyContent: 'center' }}>
+            <button type="button" className={`cadastro-btn${modo === 'novo' ? ' selecionado' : ''}`} onClick={() => setModo('novo')}>Novo Produto</button>
+            <button type="button" className={`cadastro-btn${modo === 'entrada' ? ' selecionado' : ''}`} onClick={() => setModo('entrada')}>Adicionar Quantidade</button>
           </div>
-          <div className="cadastro-input-wrap">
-            <input
-              type="text"
-              name="descricao"
-              value={form.descricao}
-              onChange={handleChange}
-              className={`cadastro-input ${form.descricao ? 'has-val' : ''}`}
-              required
-            />
-            <span className="cadastro-focus-input" data-placeholder="Descrição"></span>
-          </div>
-          <div className="cadastro-input-wrap" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <select
-              name="unidade_id"
-              value={form.unidade_id}
-              onChange={handleChange}
-              className={`cadastro-input ${form.unidade_id ? 'has-val' : ''}`}
-              required
-              style={{ flex: 1 }}
-            >
-              <option value="">Selecione a unidade_medida</option>
-              {unidades.map(u => (
-                <option key={u.id_unidade} value={u.id_unidade}>{u.nome}</option>
-              ))}
-            </select>
-            <button type="button" className="cadastro-btn" style={{ padding: '6px 12px' }} onClick={() => setShowUnidadeModal(true)}>
-              + Unidade
-            </button>
-          </div>
-          <div className="cadastro-input-wrap">
-            <input
-              type="number"
-              name="quantidade"
-              value={form.quantidade}
-              onChange={handleChange}
-              className={`cadastro-input ${form.quantidade ? 'has-val' : ''}`}
-              placeholder="Quantidade"
-              min="0.01"
-              step="0.01"
-              required
-            />
-            <span className="cadastro-focus-input" data-placeholder="Quantidade"></span>
-          </div>
+          {modo === 'novo' ? (
+            <>
+              <div className="cadastro-input-wrap">
+                <input
+                  type="text"
+                  name="nome"
+                  value={form.nome}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.nome ? 'has-val' : ''}`}
+                  required
+                />
+                <span className="cadastro-focus-input" data-placeholder="Nome do Produto"></span>
+              </div>
+              <div className="cadastro-input-wrap">
+                <input
+                  type="text"
+                  name="descricao"
+                  value={form.descricao}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.descricao ? 'has-val' : ''}`}
+                  required
+                />
+                <span className="cadastro-focus-input" data-placeholder="Descrição"></span>
+              </div>
+              <div className="cadastro-input-wrap" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <select
+                  name="unidade_id"
+                  value={form.unidade_id}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.unidade_id ? 'has-val' : ''}`}
+                  required
+                  style={{ flex: 1 }}
+                >
+                  <option value="">Selecione a unidade_medida</option>
+                  {unidades.map(u => (
+                    <option key={u.id_unidade} value={u.id_unidade}>{u.nome}</option>
+                  ))}
+                </select>
+                <button type="button" className="cadastro-btn" style={{ padding: '6px 12px' }} onClick={() => setShowUnidadeModal(true)}>
+                  + Unidade
+                </button>
+              </div>
+              <div className="cadastro-input-wrap">
+                <input
+                  type="number"
+                  name="quantidade"
+                  value={form.quantidade}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.quantidade ? 'has-val' : ''}`}
+                  placeholder="Quantidade"
+                  min="0.01"
+                  step="0.01"
+                  required
+                />
+                <span className="cadastro-focus-input" data-placeholder="Quantidade"></span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="cadastro-input-wrap">
+                <select
+                  name="produto_id"
+                  value={form.produto_id || ''}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.produto_id ? 'has-val' : ''}`}
+                  required
+                >
+                  <option value="">Selecione o Produto</option>
+                  {produtos.map(p => (
+                    <option key={p.id_produto} value={p.id_produto}>{p.nome}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="cadastro-input-wrap">
+                <input
+                  type="number"
+                  name="quantidade"
+                  value={form.quantidade}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.quantidade ? 'has-val' : ''}`}
+                  placeholder="Quantidade a adicionar"
+                  min="0.01"
+                  step="0.01"
+                  required
+                />
+              </div>
+            </>
+          )}
           <div className="cadastro-btn-container">
             <button type="button" className="cadastro-btn voltar-btn" onClick={() => navigate(-1)}>
               Voltar
             </button>
             <button type="submit" className="cadastro-btn">
-              Cadastrar Produto
+              {modo === 'novo' ? 'Cadastrar Produto' : 'Adicionar Quantidade'}
             </button>
           </div>
         </form>

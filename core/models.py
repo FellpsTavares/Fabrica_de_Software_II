@@ -103,6 +103,8 @@ class MembroFamiliar(models.Model):
     data_nascimento = models.DateField()
     familia = models.ForeignKey(Familia, on_delete=models.CASCADE, related_name='membros')
     pode_receber = models.BooleanField(default=False)
+    data_modificacao = models.DateTimeField(auto_now=True)
+    motivo_exclusao = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'membro_familiar'
@@ -163,9 +165,28 @@ class MovimentacaoEstoque(models.Model):
     tipo_movimentacao = models.CharField(max_length=10)
     quantidade = models.DecimalField(max_digits=10, decimal_places=2)
     data_movimentacao = models.DateTimeField(auto_now_add=True)
+    membro = models.ForeignKey('MembroFamiliar', on_delete=models.SET_NULL, null=True, blank=True, db_column='membro_id', to_field='id_membro')
 
     class Meta:
         db_table = 'movimentacao_estoque'
         verbose_name = 'Movimentação de Estoque'
         verbose_name_plural = 'Movimentações de Estoque'
+
+class AutorizacaoRetirada(models.Model):
+    id_autorizacao = models.AutoField(primary_key=True, db_column='id_autorizacao')
+    membro = models.ForeignKey('MembroFamiliar', on_delete=models.CASCADE, db_column='membro_id', to_field='id_membro', null=True, blank=True)
+    familia = models.ForeignKey('Familia', on_delete=models.CASCADE, db_column='familia_id', to_field='id')
+    familia_origem = models.ForeignKey('Familia', on_delete=models.SET_NULL, null=True, blank=True, db_column='familia_origem_id', related_name='autorizacoes_origem')
+    data_inicio = models.DateField()
+    data_fim = models.DateField(null=True, blank=True)
+    motivo = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        db_table = 'autorizacao_retirada'
+        verbose_name = 'Autorização de Retirada'
+        verbose_name_plural = 'Autorizações de Retirada'
+
+    def __str__(self):
+        membro_nome = self.membro.nome if self.membro else '(externo)'
+        return f"{membro_nome} autorizado para família {self.familia.nome_familia}"
 

@@ -56,18 +56,49 @@ function CadastroSaidaDoacao() {
       setErro('Selecione o produto e a quantidade!');
       return;
     }
+    // Validação extra: quantidade deve ser maior que zero
+    const quantidadeNum = parseFloat(quantidade);
+    if (isNaN(quantidadeNum) || quantidadeNum <= 0) {
+      setErro('Informe uma quantidade válida (maior que zero).');
+      return;
+    }
     try {
       await axios.post('http://127.0.0.1:8000/cadastrar_distribuicao_produto/', {
         membro_id: membroId,
         produto_id: produtoId,
-        quantidade,
+        quantidade: quantidadeNum, // envia como número
         usuario_id: 1, // TODO: pegar do usuário logado
         estoque_id: 1  // TODO: selecionar ou inferir estoque
       });
       setSucesso('Saída registrada com sucesso!');
       setCpf(''); setProdutoId(''); setQuantidade(''); setMembroId(null);
     } catch (err) {
-      setErro('Erro ao registrar saída.');
+      let mensagemErro = 'Erro ao registrar saída.';
+      if (err.response && err.response.data) {
+        if (typeof err.response.data === 'string') {
+          mensagemErro = err.response.data;
+        } else if (err.response.data.detail) {
+          mensagemErro = err.response.data.detail;
+        } else if (err.response.data.erro) {
+          mensagemErro = err.response.data.erro;
+        } else {
+          // Tenta pegar a primeira mensagem de erro do objeto
+          const firstKey = Object.keys(err.response.data)[0];
+          if (firstKey) {
+            const val = err.response.data[firstKey];
+            if (Array.isArray(val)) {
+              mensagemErro = val[0];
+            } else {
+              mensagemErro = val;
+            }
+          }
+        }
+      }
+      // Mensagem customizada para erro de quantidade NoneType
+      if (mensagemErro && mensagemErro.toString().includes('float() argument must be a string or a real number')) {
+        mensagemErro = 'Quantidade inválida: informe um valor numérico maior que zero.';
+      }
+      setErro(mensagemErro);
     }
   };
 

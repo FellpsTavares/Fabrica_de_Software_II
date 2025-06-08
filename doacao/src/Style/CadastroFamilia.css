@@ -114,3 +114,57 @@
 .cadastro-familia-btn:hover {
   background: #6ab07d;
 }
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .cadastro-box {
+    max-width: 98vw;
+    padding: 20px;
+  }
+  .cadastro-container {
+    padding: 5px;
+  }
+  table {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cadastro-box {
+    max-width: 100vw;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .cadastro-container {
+    min-width: 100vw;
+    min-height: 100vh;
+    padding: 0;
+  }
+  .cadastro-input, .cadastro-input-wrap, select, input {
+    font-size: 15px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  table {
+    font-size: 12px;
+    min-width: 500px;
+  }
+  th, td {
+    padding: 4px !important;
+  }
+  .cadastro-btn-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cadastro-box {
+    padding: 2px;
+  }
+  table {
+    min-width: 350px;
+  }
+}

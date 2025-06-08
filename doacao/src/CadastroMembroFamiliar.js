@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Style/CadastroUser.css';
 import fundo from './Assets/Fundo.png';
 
 function CadastroMembroFamiliar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const familiaIdParam = params.get('familia_id');
   const [form, setForm] = useState({
     nome: '',
     cpf: '',
     data_nascimento: '',
-    pode_receber: false
+    pode_receber: false,
+    familia_id: familiaIdParam || ''
   });
 
   const handleChange = (e) => {
@@ -40,6 +44,19 @@ function CadastroMembroFamiliar() {
       <div className="cadastro-box">
         <form onSubmit={handleSubmit} className="cadastro-form">
           <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Cadastro de Membro Familiar</h2>
+          {form.familia_id && (
+            <div className="cadastro-input-wrap">
+              <input
+                type="text"
+                name="familia_id"
+                value={form.familia_id}
+                className="cadastro-input"
+                readOnly
+                style={{ background: '#f0f0f0', color: '#888' }}
+              />
+              <span className="cadastro-focus-input" data-placeholder="ID da Família"></span>
+            </div>
+          )}
           <div className="cadastro-input-wrap">
             <input
               type="text"

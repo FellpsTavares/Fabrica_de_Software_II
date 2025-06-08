@@ -33,6 +33,18 @@ function Home() {
     navigate('/estoque');
   };
 
+  const goToPessoaAutorizada = () => {
+    navigate('/pessoa-autorizada');
+  };
+
+  const goToAlterarFamilia = () => {
+    navigate('/alterarFamilia');
+  };
+
+  const goToEstoqueLocal = () => {
+    navigate('/estoque-local');
+  };
+
   return (
     <div className="home-container">
       {/* Header */}
@@ -65,8 +77,8 @@ function Home() {
           </div>
 
           <div className="option-card" onClick={goToDoacoes}>
-            <h3>Entradas de Doações</h3>
-            <p>Visualizar às entradas de doações</p>
+            <h3>Cadastro de Produto</h3>
+            <p>Registrar novos produtos</p>
           </div>
 
           <div className="option-card" onClick={goToSaidaDoacao}>
@@ -77,6 +89,21 @@ function Home() {
           <div className="option-card" onClick={goToEstoque}>
             <h3>Visualizar Estoque</h3>
             <p>Consultar movimentações de estoque</p>
+          </div>
+
+          <div className="option-card" onClick={goToPessoaAutorizada}>
+            <h3>Cadastrar Pessoa Autorizada</h3>
+            <p>Autorizar retirada para pessoa externa ou membro</p>
+          </div>
+
+          <div className="option-card" onClick={goToAlterarFamilia}>
+            <h3>Alterar Família</h3>
+            <p>Excluir/adicionar membros e autorizar retirada</p>
+          </div>
+
+          <div className="option-card" onClick={goToEstoqueLocal}>
+            <h3>Estoque por Local</h3>
+            <p>Visualizar produtos disponíveis em um local específico</p>
           </div>
         </div>
       </main>
