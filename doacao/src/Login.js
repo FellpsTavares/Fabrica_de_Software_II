@@ -1,26 +1,25 @@
 import './Style/Login.css';
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import fundo from "./Assets/Fundo.png";
+import newLogo from "./Assets/newoldLogo.png";
 import ifg from "./Assets/IFG.png";
-import logo from "./Assets/Logo.png";
-
+import plano3 from "./Assets/plano3.png";
 
 function Login({ setIsAuthenticated }) {
-
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     if (!email || !password) {
-      alert('Preencha email e senha!');
+      setError('Preencha email e senha!');
       return;
     }
+    setLoading(true);
     try {
       const res = await fetch('http://127.0.0.1:8000/login_usuario/', {
         method: 'POST',
@@ -29,84 +28,69 @@ function Login({ setIsAuthenticated }) {
       });
       const data = await res.json();
       if (res.ok) {
-        // Salva usuário autenticado no localStorage (corrigido para usar 'id')
         localStorage.setItem('usuarioLogado', JSON.stringify({
-          id: data.id, // Corrigido!
+          id: data.id,
           nome: data.nome,
           tipo: data.tipo
         }));
         setIsAuthenticated(true);
         navigate('/home');
       } else {
-        alert(data.error || 'Usuário ou senha inválidos!');
+        setError(data.error || 'Usuário ou senha inválidos!');
       }
     } catch (err) {
-      alert('Erro ao tentar logar: ' + err.message);
+      setError('Erro ao tentar logar: ' + err.message);
     }
+    setLoading(false);
   };
 
   return (
-    <div 
-    className="container"
-    style={{ 
-      backgroundImage: `url(${fundo})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-  }}
->
-      <div className="container-login">
-        <div className="wrap-login">
-          <form className="login-form">
-
-            <span className="login-form-ifg">
-              <img src={ifg} alt="Logo 'IFG'" />
-            </span>
-
-            <span className="login-form-title">
-              <img src={logo} alt="Logo 'Gerenciamento de Doações'" />
-            </span>
-
-            <div className="wrap-input">
-              <input
-                className={email !== "" ? "has-val input" : "input"}
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <span className="focus-input" data-placeholder="Email"></span>
-            </div>
-
-            <div className="wrap-input">
-              <input
-                className={password !== "" ? "has-val input" : "input"}
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <span className="focus-input" data-placeholder="Password"></span>
-            </div>
-
-            <div className="container-login-form-btn">
-              <button className="login-form-btn"
-              onClick={handleLogin}
-
-              >
-                Login
-
-              </button>
-            </div>
-
-            <div className="text-center">
-              <a href="/comum/solicitar_trocar_senha/" class="rememberPassword">Esqueceu ou deseja alterar sua senha?</a>
-            </div>
-            
-          </form>
+    <div className="login-bg-green" style={{ background: `url(${plano3}) center/cover no-repeat` }}>
+      <div className="login-modern-container">
+        <div className="login-modern-header">
+          <img src={newLogo} alt="SIGEAS Logo" className="login-modern-logo-main" />
+          <div className="login-modern-title">
+            <h1>SIGEAS</h1>
+            <span>Gestão de Controle de Estoque com Doação</span>
+          </div>
+        </div>
+        <form className="login-modern-form" onSubmit={handleLogin}>
+          <div className="login-modern-form-title">
+            <span className="login-modern-slogan">Inovação e Solidariedade em um só sistema</span>
+          </div>
+          <div className="login-modern-input-group">
+            <input
+              className={email !== "" ? "has-val login-modern-input" : "login-modern-input"}
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Usuário"
+              autoFocus
+            />
+          </div>
+          <div className="login-modern-input-group">
+            <input
+              className={password !== "" ? "has-val login-modern-input" : "login-modern-input"}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Senha"
+            />
+          </div>
+          {error && <div className="login-modern-error">{error}</div>}
+          <button className="login-modern-btn" type="submit" disabled={loading}>
+            {loading ? 'Entrando...' : 'Entrar'}
+          </button>
+          <div className="login-modern-footer">
+            <a href="/comum/solicitar_trocar_senha/" className="login-modern-link">Esqueceu ou deseja alterar sua senha?</a>
+          </div>
+        </form>
+        <div className="login-modern-ifg">
+          <img src={ifg} alt="Logo IFG" />
         </div>
       </div>
     </div>
   );
-
 }
 
 export default Login;

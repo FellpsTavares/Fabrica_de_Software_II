@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import fundo from './Assets/Fundo.png';
+import MenuLateral from './Components/MenuLateral';
+import homeLogo from './Assets/home.jpg';
+import plano3 from "./Assets/plano3.png";
 
 function CadastroSaidaDoacao() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [cpf, setCpf] = useState('');
   const [produtos, setProdutos] = useState([]);
   const [produtoId, setProdutoId] = useState('');
@@ -132,67 +136,78 @@ function CadastroSaidaDoacao() {
   };
 
   return (
-    <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>
-      <div className="cadastro-box">
-        <form onSubmit={handleSubmit} className="cadastro-form">
-          <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Saída de Doação</h2>
-          <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', gap: 10}}>
-            <input
-              type="text"
-              name="cpf"
-              value={cpf}
-              onChange={e => setCpf(e.target.value)}
-              className={`cadastro-input ${cpf ? 'has-val' : ''}`}
-              placeholder="CPF da Pessoa que irá retirar a doação"
-              style={{flex: 1}}
-            />
-            <button type="button" className="cadastro-btn" onClick={handleBuscarMembro}>
-              Buscar CPF
-            </button>
-          </div>
-          {erroCpf && <div style={{color: 'red', marginBottom: 10}}>{erroCpf}</div>}
-          {membroNome && <div style={{color: 'green', marginBottom: 10}}>Membro válido! Nome: {membroNome}</div>}
+    <>
+      <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <header className="header">
+        <div className="header-left">
+          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+          <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </button>
+        </div>
+      </header>
+      <div className="cadastro-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="cadastro-box">
+          <form onSubmit={handleSubmit} className="cadastro-form">
+            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Saída de Doação</h2>
+            <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', gap: 10}}>
+              <input
+                type="text"
+                name="cpf"
+                value={cpf}
+                onChange={e => setCpf(e.target.value)}
+                className={`cadastro-input ${cpf ? 'has-val' : ''}`}
+                placeholder="CPF da Pessoa que irá retirar a doação"
+                style={{flex: 1}}
+              />
+              <button type="button" className="cadastro-btn" onClick={handleBuscarMembro}>
+                Buscar CPF
+              </button>
+            </div>
+            {erroCpf && <div style={{color: 'red', marginBottom: 10}}>{erroCpf}</div>}
+            {membroNome && <div style={{color: 'green', marginBottom: 10}}>Membro válido! Nome: {membroNome}</div>}
 
-          <div className="cadastro-input-wrap">
-            <select
-              name="produto"
-              value={produtoId}
-              onChange={e => setProdutoId(e.target.value)}
-              className={`cadastro-input ${produtoId ? 'has-val' : ''}`}
-            >
-              <option value="">Selecione o Produto</option>
-              {produtos.map(prod => (
-                <option key={prod.id_produto} value={prod.id_produto}>{prod.nome}</option>
-              ))}
-            </select>
-          </div>
+            <div className="cadastro-input-wrap">
+              <select
+                name="produto"
+                value={produtoId}
+                onChange={e => setProdutoId(e.target.value)}
+                className={`cadastro-input ${produtoId ? 'has-val' : ''}`}
+              >
+                <option value="">Selecione o Produto</option>
+                {produtos.map(prod => (
+                  <option key={prod.id_produto} value={prod.id_produto}>{prod.nome}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="cadastro-input-wrap">
-            <input
-              type="number"
-              name="quantidade"
-              value={quantidade}
-              onChange={e => setQuantidade(e.target.value)}
-              className={`cadastro-input ${quantidade ? 'has-val' : ''}`}
-              placeholder="Quantidade"
-              min="0.01" step="0.01"
-            />
-          </div>
+            <div className="cadastro-input-wrap">
+              <input
+                type="number"
+                name="quantidade"
+                value={quantidade}
+                onChange={e => setQuantidade(e.target.value)}
+                className={`cadastro-input ${quantidade ? 'has-val' : ''}`}
+                placeholder="Quantidade"
+                min="0.01" step="0.01"
+              />
+            </div>
 
-          {erro && <div style={{color: 'red', marginBottom: 10}}>{erro}</div>}
-          {sucesso && <div style={{color: 'green', marginBottom: 10}}>{sucesso}</div>}
+            {erro && <div style={{color: 'red', marginBottom: 10}}>{erro}</div>}
+            {sucesso && <div style={{color: 'green', marginBottom: 10}}>{sucesso}</div>}
 
-          <div className="cadastro-btn-container">
-            <button type="button" className="cadastro-btn voltar-btn" onClick={() => navigate(-1)}>
-              Voltar
-            </button>
-            <button type="submit" className="cadastro-btn">
-              Registrar Saída
-            </button>
-          </div>
-        </form>
+            <div className="cadastro-btn-container">
+              <button type="button" className="cadastro-btn voltar-btn" onClick={() => navigate(-1)}>
+                Voltar
+              </button>
+              <button type="submit" className="cadastro-btn">
+                Registrar Saída
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

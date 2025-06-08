@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';           // <-- importe o axios
 import './Style/CadastroUser.css';
 import fundo from "./Assets/Fundo.png";
+import MenuLateral from './Components/MenuLateral';
+import homeLogo from './Assets/home.jpg';
+import plano3 from "./Assets/plano3.png";
 
 function CadastroUser() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const [form, setForm] = useState({
     nome: '',
@@ -60,84 +64,99 @@ function CadastroUser() {
   };
 
   return (
-    <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>
-      <div className="cadastro-box">
-        <form onSubmit={handleSubmit} className="cadastro-form">
-          {/* Nome */}
-          <div className="cadastro-input-wrap">
-            <input
-              type="text"
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-              className={`cadastro-input ${form.nome ? 'has-val' : ''}`}
-            />
-            <span className="cadastro-focus-input" data-placeholder="Nome Completo"></span>
-          </div>
+    <>
+      <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <header className="header">
+        <div className="header-left">
+          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+          <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="4" y1="12" x2="20" y2="12"/>
+              <line x1="4" y1="18" x2="20" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+      <div className="cadastro-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="cadastro-box">
+          <form onSubmit={handleSubmit} className="cadastro-form">
+            {/* Nome */}
+            <div className="cadastro-input-wrap">
+              <input
+                type="text"
+                name="nome"
+                value={form.nome}
+                onChange={handleChange}
+                className={`cadastro-input ${form.nome ? 'has-val' : ''}`}
+              />
+              <span className="cadastro-focus-input" data-placeholder="Nome Completo"></span>
+            </div>
 
-          {/* Email */}
-          <div className="cadastro-input-wrap">
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              className={`cadastro-input ${form.email ? 'has-val' : ''}`}
-            />
-            <span className="cadastro-focus-input" data-placeholder="Email"></span>
-          </div>
+            {/* Email */}
+            <div className="cadastro-input-wrap">
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                className={`cadastro-input ${form.email ? 'has-val' : ''}`}
+              />
+              <span className="cadastro-focus-input" data-placeholder="Email"></span>
+            </div>
 
-          {/* Senha */}
-          <div className="cadastro-input-wrap">
-            <input
-              type="password"
-              name="senha"
-              value={form.senha}
-              onChange={handleChange}
-              className={`cadastro-input ${form.senha ? 'has-val' : ''}`}
-            />
-            <span className="cadastro-focus-input" data-placeholder="Senha"></span>
-          </div>
+            {/* Senha */}
+            <div className="cadastro-input-wrap">
+              <input
+                type="password"
+                name="senha"
+                value={form.senha}
+                onChange={handleChange}
+                className={`cadastro-input ${form.senha ? 'has-val' : ''}`}
+              />
+              <span className="cadastro-focus-input" data-placeholder="Senha"></span>
+            </div>
 
-          {/* Confirmar Senha */}
-          <div className="cadastro-input-wrap">
-            <input
-              type="password"
-              name="confirmarSenha"
-              value={form.confirmarSenha}
-              onChange={handleChange}
-              className={`cadastro-input ${form.confirmarSenha ? 'has-val' : ''}`}
-            />
-            <span className="cadastro-focus-input" data-placeholder="Confirmar Senha"></span>
-          </div>
+            {/* Confirmar Senha */}
+            <div className="cadastro-input-wrap">
+              <input
+                type="password"
+                name="confirmarSenha"
+                value={form.confirmarSenha}
+                onChange={handleChange}
+                className={`cadastro-input ${form.confirmarSenha ? 'has-val' : ''}`}
+              />
+              <span className="cadastro-focus-input" data-placeholder="Confirmar Senha"></span>
+            </div>
 
-          {/* Nome do Local de Trabalho */}
-          <div className="cadastro-input-wrap">
-            <input
-              type="text"
-              name="nome_local"
-              value={form.nome_local}
-              onChange={handleChange}
-              className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
-              required
-            />
-            <span className="cadastro-focus-input" data-placeholder="Local de Trabalho (nome do local)"></span>
-          </div>
+            {/* Nome do Local de Trabalho */}
+            <div className="cadastro-input-wrap">
+              <input
+                type="text"
+                name="nome_local"
+                value={form.nome_local}
+                onChange={handleChange}
+                className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
+                required
+              />
+              <span className="cadastro-focus-input" data-placeholder="Local de Trabalho (nome do local)"></span>
+            </div>
 
-          <div className="cadastro-btn-container">
-            <button 
-              type="button" 
-              className="cadastro-btn voltar-btn"
-              onClick={() => navigate(-1)}>
-              Voltar
-            </button>
-            <button type="submit" className="cadastro-btn">
-              Cadastrar
-            </button>
-          </div>
-        </form>
+            <div className="cadastro-btn-container">
+              <button 
+                type="button" 
+                className="cadastro-btn voltar-btn"
+                onClick={() => navigate(-1)}>
+                Voltar
+              </button>
+              <button type="submit" className="cadastro-btn">
+                Cadastrar
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

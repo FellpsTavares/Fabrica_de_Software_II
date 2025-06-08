@@ -186,5 +186,169 @@ html {
   
 }
 
+.login-bg {
+  min-height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-bg-green {
+  min-height: 100vh;
+  width: 100vw;
+  background: #e6f7ee;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-modern-container {
+  background: rgba(255,255,255,0.98);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px #0002;
+  padding: 38px 32px 24px 32px;
+  max-width: 370px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  z-index: 2;
+}
+
+.login-modern-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.login-modern-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+}
+.login-modern-logo-main {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  background: #e6f7ee;
+  object-fit: contain;
+}
+.login-modern-title h1 {
+  font-size: 2.1rem;
+  color: #2e8b57;
+  margin: 0;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.login-modern-title span {
+  font-size: 1.02rem;
+  color: #222;
+  font-weight: 500;
+}
+.login-modern-slogan {
+  color: #2e8b57;
+  font-size: 1.08rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+.login-modern-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.login-modern-form-title {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.login-modern-form-title img {
+  width: 90px;
+  height: auto;
+}
+.login-modern-input-group {
+  width: 100%;
+}
+.login-modern-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #b2dfdb;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+  background: #f8fafb;
+  color: #222;
+}
+.login-modern-input:focus {
+  border: 1.5px solid #2e8b57;
+  background: #fff;
+}
+.login-modern-btn {
+  width: 100%;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #2e8b57 60%, #7fc98f 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0001;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.login-modern-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.login-modern-btn:hover:not(:disabled) {
+  background: linear-gradient(90deg, #24914b 60%, #5fc98f 100%);
+  box-shadow: 0 4px 16px #0002;
+}
+.login-modern-error {
+  color: #c00;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 7px 0;
+  text-align: center;
+  font-size: 0.98rem;
+  margin-bottom: -8px;
+}
+.login-modern-footer {
+  text-align: center;
+  margin-top: 6px;
+}
+.login-modern-link {
+  color: #2e8b57;
+  text-decoration: underline;
+  font-size: 0.98rem;
+  transition: color 0.2s;
+}
+.login-modern-link:hover {
+  color: #c47f00;
+}
+.login-modern-ifg {
+  margin-top: 18px;
+  text-align: center;
+}
+.login-modern-ifg img {
+  width: 70px;
+  height: auto;
+  opacity: 0.92;
+}
+.login-bg-illustration, .login-bg-message {
+  display: none !important;
+}
+
 
 
