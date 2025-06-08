@@ -103,30 +103,31 @@ def cadastrar_familia(request):
 def cadastrar_produto(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
-
     try:
         data = json.loads(request.body)
         nome = data.get('nome')
         descricao = data.get('descricao', '')
         unidade_id = data.get('unidade_id')
         quantidade = data.get('quantidade', 0)
-        estoque_destino_id = data.get('estoque_destino_id', 1)  # Padrão: 1
         usuario_id = data.get('usuario_id', 1)  # Padrão: 1 (ajuste para pegar do usuário logado)
-
         if not nome or not unidade_id:
             return JsonResponse({'error': 'Nome e unidade de medida são obrigatórios'}, status=400)
-
-        from .models import Produto, UnidadeMedida, MovimentacaoEstoque
+        from .models import Produto, UnidadeMedida, MovimentacaoEstoque, Usuario, Estoque
         try:
             unidade_medida = UnidadeMedida.objects.get(id_unidade=unidade_id)
         except UnidadeMedida.DoesNotExist:
             return JsonResponse({'error': 'Unidade de medida não encontrada'}, status=404)
-
+        usuario = Usuario.objects.get(id=usuario_id)
+        # Busca o estoque vinculado ao local do usuário
+        estoque = Estoque.objects.filter(nome=usuario.local.nome_local).first()
+        if not estoque:
+            return JsonResponse({'error': 'Estoque não encontrado para o local do usuário'}, status=404)
         produto = Produto.objects.create(
             nome=nome,
             descricao=descricao,
             unidade_medida=unidade_medida,
-            quantidade=quantidade
+            quantidade=quantidade,
+            estoque=estoque  # Salva o estoque_id na tabela Produto
         )
         # Cria movimentação de estoque (entrada)
         MovimentacaoEstoque.objects.create(
@@ -134,7 +135,7 @@ def cadastrar_produto(request):
             usuario_id=usuario_id,
             tipo_movimentacao='entrada',
             quantidade=quantidade,
-            estoque_destino_id=estoque_destino_id,
+            estoque_destino_id=estoque.id_estoque,
             estoque_origem_id=None
         )
         return JsonResponse({'message': 'Produto cadastrado com sucesso!', 'id': produto.id_produto}, status=201)
@@ -196,16 +197,21 @@ def cadastrar_movimentacao_estoque(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
     try:
-        from .models import MovimentacaoEstoque, Produto
+        from .models import MovimentacaoEstoque, Produto, Usuario, Estoque
         data = json.loads(request.body)
         produto_id = data.get('produto_id')
         usuario_id = data.get('usuario_id')
-        estoque_origem_id = data.get('estoque_origem_id')
-        estoque_destino_id = data.get('estoque_destino_id')
         tipo_movimentacao = data.get('tipo_movimentacao')
         quantidade = data.get('quantidade')
         if not (produto_id and usuario_id and tipo_movimentacao and quantidade):
             return JsonResponse({'error': 'Campos obrigatórios faltando'}, status=400)
+        usuario = Usuario.objects.get(id=usuario_id)
+        # Busca o estoque vinculado ao local do usuário
+        estoque = Estoque.objects.filter(nome=usuario.local.nome_local).first()
+        if not estoque:
+            return JsonResponse({'error': 'Estoque não encontrado para o local do usuário'}, status=404)
+        estoque_origem_id = estoque.id_estoque if tipo_movimentacao == 'saida' else None
+        estoque_destino_id = estoque.id_estoque if tipo_movimentacao == 'entrada' else None
         produto = Produto.objects.get(id_produto=produto_id)
         if tipo_movimentacao == 'saida':
             if float(quantidade) > float(produto.quantidade):
@@ -226,6 +232,8 @@ def cadastrar_movimentacao_estoque(request):
         return JsonResponse({'message': 'Movimentação registrada com sucesso!', 'id': movimentacao.id_movimentacao}, status=201)
     except Produto.DoesNotExist:
         return JsonResponse({'error': 'Produto não encontrado'}, status=404)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
@@ -292,7 +300,11 @@ def listar_produtos(request):
     from .models import Produto
     if request.method != 'GET':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
-    produtos = Produto.objects.all().values('id_produto', 'nome')
+    estoque_id = request.GET.get('estoque_id')
+    if estoque_id:
+        produtos = Produto.objects.filter(estoque_id=estoque_id).values('id_produto', 'nome')
+    else:
+        produtos = Produto.objects.all().values('id_produto', 'nome')
     return JsonResponse(list(produtos), safe=False)
 
 @csrf_exempt
@@ -353,7 +365,9 @@ def listar_movimentacoes_estoque(request):
             'unidade_nome': unidade_nome,
             'data_movimentacao': mov.data_movimentacao,
             'tipo_movimentacao': mov.tipo_movimentacao,
-            'membro_nome': None
+            'membro_nome': None,
+            'estoque_destino_id': mov.estoque_destino.id_estoque if mov.estoque_destino else None,
+            'estoque_origem_id': mov.estoque_origem.id_estoque if mov.estoque_origem else None
         }
         if mov.tipo_movimentacao == 'entrada':
             entradas.append(mov_dict)
@@ -544,3 +558,19 @@ def listar_estoques(request):
         return JsonResponse({'error': 'Método não permitido'}, status=405)
     estoques = Estoque.objects.all().values('id_estoque', 'nome')
     return JsonResponse(list(estoques), safe=False)
+
+@csrf_exempt
+def usuario_detalhe(request, usuario_id):
+    from .models import Usuario, LocalEntrega
+    try:
+        usuario = Usuario.objects.select_related('local').get(id=usuario_id)
+        local = usuario.local
+        return JsonResponse({
+            'id': usuario.id,
+            'nome': usuario.nome_usuario,
+            'tipo': usuario.tipo_usuario,
+            'local_id': local.id if local else None,
+            'local_nome': local.nome_local if local else None
+        })
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)

@@ -27,8 +27,16 @@ function CadastroMembroFamiliar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Verifica usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id;
+    if (!usuario_id) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     try {
-      const res = await axios.post('http://127.0.0.1:8000/cadastrar_membro_familiar/', form, {
+      const payload = { ...form, usuario_id };
+      const res = await axios.post('http://127.0.0.1:8000/cadastrar_membro_familiar/', payload, {
         headers: { 'Content-Type': 'application/json' }
       });
       alert(res.data.message || 'Membro cadastrado com sucesso!');

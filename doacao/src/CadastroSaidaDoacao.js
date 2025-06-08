@@ -14,11 +14,36 @@ function CadastroSaidaDoacao() {
   const [erroCpf, setErroCpf] = useState('');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
+  const [estoqueId, setEstoqueId] = useState('');
 
-  // Buscar produtos ao montar
+  // Buscar estoque do usuário logado ao montar
   React.useEffect(() => {
-    axios.get('http://127.0.0.1:8000/listar_produtos/')
-      .then(res => setProdutos(res.data))
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    if (!usuarioLogado || !usuarioLogado.id) return setProdutos([]);
+    // Busca o local do usuário pelo endpoint detalhado
+    axios.get(`http://127.0.0.1:8000/usuario_detalhe/${usuarioLogado.id}/`)
+      .then(resUser => {
+        const localNome = resUser.data.local_nome;
+        if (!localNome) return setProdutos([]);
+        // Busca o estoque cujo nome é igual ao nome_local
+        axios.get('http://127.0.0.1:8000/listar_estoques/')
+          .then(res => {
+            const estoques = res.data;
+            const estoqueUsuario = estoques.find(e => (e.nome || '').trim().toLowerCase() === (localNome || '').trim().toLowerCase());
+            if (estoqueUsuario) {
+              setEstoqueId(estoqueUsuario.id_estoque);
+              // Busca produtos desse estoque
+              axios.get(`http://127.0.0.1:8000/listar_produtos/?estoque_id=${estoqueUsuario.id_estoque}`)
+                .then(res2 => {
+                  setProdutos(res2.data);
+                })
+                .catch(() => setProdutos([]));
+            } else {
+              setProdutos([]);
+            }
+          })
+          .catch(() => setProdutos([]));
+      })
       .catch(() => setProdutos([]));
   }, []);
 
@@ -63,12 +88,18 @@ function CadastroSaidaDoacao() {
       return;
     }
     try {
+      const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+      const usuario_id = usuarioLogado?.id;
+      if (!usuario_id) {
+        setErro('Usuário não autenticado! Faça login novamente.');
+        return;
+      }
       await axios.post('http://127.0.0.1:8000/cadastrar_distribuicao_produto/', {
         membro_id: membroId,
         produto_id: produtoId,
-        quantidade: quantidadeNum, // envia como número
-        usuario_id: 1, // TODO: pegar do usuário logado
-        estoque_id: 1  // TODO: selecionar ou inferir estoque
+        quantidade: quantidadeNum,
+        usuario_id,
+        estoque_id: estoqueId
       });
       setSucesso('Saída registrada com sucesso!');
       setCpf(''); setProdutoId(''); setQuantidade(''); setMembroId(null);
@@ -82,7 +113,6 @@ function CadastroSaidaDoacao() {
         } else if (err.response.data.erro) {
           mensagemErro = err.response.data.erro;
         } else {
-          // Tenta pegar a primeira mensagem de erro do objeto
           const firstKey = Object.keys(err.response.data)[0];
           if (firstKey) {
             const val = err.response.data[firstKey];
@@ -94,7 +124,6 @@ function CadastroSaidaDoacao() {
           }
         }
       }
-      // Mensagem customizada para erro de quantidade NoneType
       if (mensagemErro && mensagemErro.toString().includes('float() argument must be a string or a real number')) {
         mensagemErro = 'Quantidade inválida: informe um valor numérico maior que zero.';
       }

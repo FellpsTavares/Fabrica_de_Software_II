@@ -18,13 +18,28 @@ function CadastroDoacoes() {
   const [produtos, setProdutos] = useState([]);
   const [showUnidadeModal, setShowUnidadeModal] = useState(false);
   const [modo, setModo] = useState('novo'); // 'novo' ou 'entrada'
+  const [estoqueId, setEstoqueId] = useState('');
 
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/listar_unidades_medida/')
       .then(res => setUnidades(res.data))
       .catch(() => setUnidades([]));
-    axios.get('http://127.0.0.1:8000/listar_produtos/')
-      .then(res => setProdutos(res.data))
+    // Buscar estoque do usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    if (!usuarioLogado || !usuarioLogado.nome) return;
+    axios.get('http://127.0.0.1:8000/listar_estoques/')
+      .then(res => {
+        const estoques = res.data;
+        const estoqueUsuario = estoques.find(e => e.nome === usuarioLogado.nome);
+        if (estoqueUsuario) {
+          setEstoqueId(estoqueUsuario.id_estoque);
+          axios.get(`http://127.0.0.1:8000/listar_produtos/?estoque_id=${estoqueUsuario.id_estoque}`)
+            .then(res2 => setProdutos(res2.data))
+            .catch(() => setProdutos([]));
+        } else {
+          setProdutos([]);
+        }
+      })
       .catch(() => setProdutos([]));
   }, [showUnidadeModal]); // Atualiza ao fechar modal
 
@@ -35,13 +50,21 @@ function CadastroDoacoes() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Recupera usuário logado do localStorage
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id ? Number(usuarioLogado.id) : null;
+    if (!usuario_id || isNaN(usuario_id)) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     if (modo === 'novo') {
       // Monta o JSON correto para novo produto
       const payload = {
         nome: form.nome,
         descricao: form.descricao,
         unidade_id: Number(form.unidade_id),
-        quantidade: Number(form.quantidade)
+        quantidade: Number(form.quantidade),
+        usuario_id // Envia o usuário logado
       };
       try {
         const res = await axios.post('http://127.0.0.1:8000/cadastrar_produto/', payload, {
@@ -64,8 +87,8 @@ function CadastroDoacoes() {
           produto_id: Number(form.produto_id),
           quantidade: Number(form.quantidade),
           tipo_movimentacao: 'entrada',
-          usuario_id: 1, // TODO: pegar do usuário logado
-          estoque_destino_id: 1 // TODO: selecionar estoque
+          usuario_id, // Envia o usuário logado
+          estoque_destino_id: estoqueId // Corrigido: estoque correto do usuário
         };
         await axios.post('http://127.0.0.1:8000/cadastrar_movimentacao_estoque/', payload, {
           headers: { 'Content-Type': 'application/json' }

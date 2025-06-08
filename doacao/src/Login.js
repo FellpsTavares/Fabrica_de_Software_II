@@ -29,6 +29,12 @@ function Login({ setIsAuthenticated }) {
       });
       const data = await res.json();
       if (res.ok) {
+        // Salva usuário autenticado no localStorage (corrigido para usar 'id')
+        localStorage.setItem('usuarioLogado', JSON.stringify({
+          id: data.id, // Corrigido!
+          nome: data.nome,
+          tipo: data.tipo
+        }));
         setIsAuthenticated(true);
         navigate('/home');
       } else {

@@ -132,7 +132,8 @@ class Produto(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
     unidade_medida = models.ForeignKey('UnidadeMedida', on_delete=models.PROTECT, db_column='unidade_id', to_field='id_unidade')
-    quantidade = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # NOVO CAMPO
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    estoque = models.ForeignKey('Estoque', on_delete=models.PROTECT, db_column='estoque_id', to_field='id_estoque', null=True, blank=True)  # NOVO CAMPO
 
     class Meta:
         db_table = 'produto'

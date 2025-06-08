@@ -25,7 +25,13 @@ function CadastroFamilia() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    // Verifica usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id;
+    if (!usuario_id) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     // Objeto com todos os dados do formulário, incluindo Local como texto
     const dadosParaEnviar = {
       nome_familia: form.nome_familia,
@@ -35,7 +41,8 @@ function CadastroFamilia() {
       quantidade_integrantes: form.quantidade_integrantes,
       tipo_moradia: form.tipo_moradia,
       status: form.status,
-      cadastrar_local: form.cadastrar_local
+      cadastrar_local: form.cadastrar_local,
+      usuario_id // Envia o usuário logado
     };
 
     try {

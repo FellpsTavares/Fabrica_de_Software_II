@@ -27,4 +27,5 @@ urlpatterns = [
     path('listar_locais/', views.listar_locais, name='listar_locais'),
     path('estoque_local/', views.estoque_local, name='estoque_local'),
     path('listar_estoques/', views.listar_estoques, name='listar_estoques'),
+    path('usuario_detalhe/<int:usuario_id>/', views.usuario_detalhe, name='usuario_detalhe'),
 ]

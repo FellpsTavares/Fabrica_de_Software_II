@@ -25,7 +25,13 @@ function CadastroLocal() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    // Verifica usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id;
+    if (!usuario_id) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     // Incluindo UF e Cidade nos dados a enviar, se necessário.
     // Se eles são apenas visuais como no código original, mantenha como está.
     // Se precisar enviar, adicione form.uf e form.cidade aqui.
@@ -35,6 +41,7 @@ function CadastroLocal() {
       endereco: form.endereco,
       telefone: form.telefone,
       coordenador: form.coordenador,
+      usuario_id // Envia o usuário logado
       // Adicione se necessário:
       // uf: form.uf, 
       // cidade: form.cidade

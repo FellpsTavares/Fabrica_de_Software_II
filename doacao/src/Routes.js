@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate  } from "react-router-dom";
 
 import Login from "./Login";
@@ -20,13 +20,24 @@ import EditarFamilia from './EditarFamilia';
 
 const AppRoutes = () => {
   // Mantém a lógica de autenticação como estava
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  // Exemplo: Simula autenticação após login para testes
-  // Você deve ajustar isso conforme sua lógica real de login
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Verifica se há usuário logado no localStorage
+    return !!localStorage.getItem('usuarioLogado');
+  });
+
+  // Atualiza autenticação ao logar
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
   };
+
+  // Atualiza autenticação ao logout (caso queira implementar logout futuramente)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsAuthenticated(!!localStorage.getItem('usuarioLogado'));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   return (
     <BrowserRouter>

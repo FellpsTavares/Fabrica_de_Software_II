@@ -55,6 +55,13 @@ function CadastroPessoaAutorizada({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Verifica usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id;
+    if (!usuario_id) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     if (!familiaSelecionada) {
       alert('Selecione uma família para autorizar a retirada!');
       return;
@@ -68,6 +75,7 @@ function CadastroPessoaAutorizada({ onSuccess }) {
         data_inicio: dataInicio,
         data_fim: dataFim || null,
         observacao,
+        usuario_id // Envia o usuário logado
       });
       alert('Pessoa autorizada cadastrada com sucesso!');
       if (onSuccess) onSuccess();

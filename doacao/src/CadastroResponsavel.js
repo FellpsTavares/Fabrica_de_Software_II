@@ -21,12 +21,19 @@ function CadastroResponsavel() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    // Verifica usuário logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+    const usuario_id = usuarioLogado?.id;
+    if (!usuario_id) {
+      alert('Usuário não autenticado! Faça login novamente.');
+      return;
+    }
     // Objeto com os dados a serem enviados
     const dadosParaEnviar = {
       nome: form.nome_responsavel,
       cpf: form.cpf_responsavel,
-      telefone: form.telefone_responsavel
+      telefone: form.telefone_responsavel,
+      usuario_id // Envia o usuário logado
     };
 
     console.log("Dados a enviar:", dadosParaEnviar);
