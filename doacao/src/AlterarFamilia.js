@@ -6,6 +6,7 @@ import fundo from './Assets/Fundo.png';
 import MenuLateral from './Components/MenuLateral';
 import homeLogo from './Assets/home.jpg';
 import plano3 from './Assets/plano3.png';
+import Rodape from './Components/Rodape';
 
 function AlterarFamilia() {
   const [familias, setFamilias] = useState([]);
@@ -24,6 +25,10 @@ function AlterarFamilia() {
       .catch(() => setFamilias([]));
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Corrige: não buscar membros nem mostrar membros na tela de seleção, só redireciona
   const handleSelecionarFamilia = (e) => {
     const id = e.target.value;
@@ -38,13 +43,23 @@ function AlterarFamilia() {
       <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
       <header className="header">
         <div className="header-left">
-          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }} />
+          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/home')} style={{ cursor: 'pointer' }} />
           <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="4" y1="6" x2="20" y2="6" />
               <line x1="4" y1="12" x2="20" y2="12" />
               <line x1="4" y1="18" x2="20" y2="18" />
             </svg>
+          </button>
+        </div>
+        <h2>Alterar Família</h2>
+        <div className="header-user-area">
+          <span className="user-info">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: 6 }}><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 8-4 8-4s8 0 8 4" /></svg>
+            {JSON.parse(localStorage.getItem('usuarioLogado'))?.nome || 'Usuário'}
+          </span>
+          <button onClick={() => navigate(-1)} className="header-logout-btn" title="Voltar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /><line x1="9" y1="12" x2="21" y2="12" /></svg>
           </button>
         </div>
       </header>
@@ -70,6 +85,7 @@ function AlterarFamilia() {
           {sucesso && <div style={{ color: 'green', marginTop: 10 }}>{sucesso}</div>}
         </div>
       </div>
+      <Rodape />
     </>
   );
 }

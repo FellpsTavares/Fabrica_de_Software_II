@@ -66,14 +66,17 @@
 
 .user-info {
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1rem;
   display: flex;
   align-items: center;
-  background: rgba(46,139,87,0.18);
-  border-radius: 16px;
-  padding: 4px 14px 4px 8px;
-  margin-right: 6px;
+  background: #5ac25f;
+  border-radius: 18px;
+  padding: 4px 16px;
+  margin-right: 10px;
+  box-shadow: none;
+  min-width: 80px;
+  justify-content: center;
 }
 
 .header-logout-btn {
@@ -110,15 +113,17 @@
   display: flex;
   align-items: center;
   transition: background 0.2s;
+  border-radius: 8px;
 }
 
 .menu-hamburger:hover {
   background: #e6f7ee;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .menu-hamburger svg {
-  stroke: #2e8b57;
+  stroke: #000000;
+  background: none;
 }
 
 /* Estilos do conteúdo principal */
@@ -127,6 +132,7 @@
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
+  margin-top: 60px; /* Adicionado espaçamento para não ficar sob o header */
 }
 
 .main-content h1 {

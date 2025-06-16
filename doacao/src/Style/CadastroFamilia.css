@@ -6,15 +6,17 @@
   min-height: 100vh;
   background-size: cover;
   background-position: center;
-  padding: 20px;
+  /* Removido padding-top/margin-top para evitar espaço em branco */
+  padding: 0;
 }
 
 .cadastro-familia-box {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(198, 240, 221, 0.92); /* verde claro harmonioso */
   border-radius: 8px;
   padding: 40px;
   width: 100%;
-  max-width: 500px; /* Aumentei o max-width para acomodar mais campos */
+  max-width: 500px;
+  box-sizing: border-box;
 }
 
 /* Container dos Inputs */
@@ -29,12 +31,14 @@
   width: 100%;
   height: 40px;
   border: none;
-  background: transparent;
-  padding: 0 5px;
+  background: #e6f4ea;
+  padding: 0 8px;
   font-size: 15px;
-  color: #999;
+  color: #2e8b57;
   outline: none !important;
+  border-radius: 8px;
   box-shadow: none !important;
+  transition: background 0.2s;
 }
 
 /* Placeholder Animado */
@@ -102,13 +106,14 @@
 }
 
 .voltar-familia-btn {
-  background: #7fc98f;
-  color: white;
-  border: 1px solid #ddd;
+  background: #c0392b !important;
+  color: #fff !important;
+  border: 1px solid #c0392b !important;
 }
 
 .voltar-familia-btn:hover {
-  background: #6ab07d;
+  background: #a93226 !important;
+  color: #fff !important;
 }
 
 .cadastro-familia-btn:hover {
@@ -126,6 +131,13 @@
   }
   table {
     font-size: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .cadastro-familia-box {
+    padding: 18px 4vw;
+    max-width: 98vw;
   }
 }
 

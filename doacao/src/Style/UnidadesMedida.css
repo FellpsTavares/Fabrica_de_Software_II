@@ -1,0 +1,111 @@
+/* Estilo exclusivo para tela de cadastro de unidade de medida */
+.unidades-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.unidades-box-horizontal {
+  background: rgba(255,255,255,0.97);
+  border-radius: 12px;
+  padding: 40px 60px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 2px 16px #0002;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.unidades-form-horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 260px;
+}
+
+.cadastro-input {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.cadastro-btn {
+  background: #7fc98f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.cadastro-btn:hover {
+  background: #388e3c;
+}
+
+.unidades-tabela-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.unidades-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0001;
+}
+.unidades-tabela th, .unidades-tabela td {
+  padding: 10px 16px;
+  text-align: left;
+}
+.unidades-tabela th {
+  background: #7fc98f;
+  color: #fff;
+}
+.unidades-tabela tr:nth-child(even) {
+  background: #f1f8f5;
+}
+.unidades-btn-excluir {
+  background: #e57373;
+  margin-left: 8px;
+}
+.unidades-btn-excluir:hover {
+  background: #c62828;
+}
+
+.unidades-msg {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.unidades-voltar-btn {
+  background: #e57373;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 18px;
+  align-self: flex-start;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.unidades-voltar-btn:hover {
+  background: #c62828;
+}
+.unidades-titulo {
+  font-size: 2rem;
+  color: #388e3c;
+  margin-bottom: 24px;
+}

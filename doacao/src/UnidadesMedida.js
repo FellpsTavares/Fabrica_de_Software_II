@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import fundo from './Assets/Fundo.png';
+import fundo from './Assets/plano3.png';
+import './Style/UnidadesMedida.css';
+import { useNavigate } from 'react-router-dom';
 
 function UnidadesMedida() {
   const [unidades, setUnidades] = useState([]);
   const [novaUnidade, setNovaUnidade] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const navigate = useNavigate();
 
   // Carrega unidades ao montar
   useEffect(() => {
     carregarUnidades();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const carregarUnidades = async () => {
@@ -50,41 +54,48 @@ function UnidadesMedida() {
   };
 
   return (
-    <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>
-      <div className="cadastro-box">
-        <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Unidades de Medida</h2>
-        <form onSubmit={handleCadastrar} style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-          <input
-            type="text"
-            value={novaUnidade}
-            onChange={e => setNovaUnidade(e.target.value)}
-            className="cadastro-input"
-            placeholder="Nova unidade de medida"
-            style={{ flex: 1 }}
-          />
-          <button type="submit" className="cadastro-btn">Cadastrar</button>
-        </form>
-        {mensagem && <div style={{ marginBottom: 10, color: mensagem.includes('sucesso') ? 'green' : 'red' }}>{mensagem}</div>}
-        <table style={{ width: '100%', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #eee' }}>
-          <thead>
-            <tr style={{ background: '#f5f5f5' }}>
-              <th style={{ padding: 8 }}>Unidade</th>
-              <th style={{ padding: 8 }}>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {unidades.map(u => (
-              <tr key={u.id_unidade}>
-                <td style={{ padding: 8 }}>{u.nome}</td>
-                <td style={{ padding: 8 }}>
-                  <button className="cadastro-btn" style={{ background: '#c00', color: '#fff' }} onClick={() => handleExcluir(u.id_unidade)}>
-                    Excluir
-                  </button>
-                </td>
+    <div className="unidades-container" style={{ backgroundImage: `url(${fundo})` }}>
+      <div className="unidades-box-horizontal">
+        <div style={{display: 'flex', flexDirection: 'column', minWidth: 260, flex: 1}}>
+          <button className="unidades-voltar-btn" onClick={() => navigate(-1)} title="Voltar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
+            Voltar
+          </button>
+          <h2 className="unidades-titulo">Unidades de Medida</h2>
+          <form onSubmit={handleCadastrar} className="unidades-form-horizontal">
+            <input
+              type="text"
+              value={novaUnidade}
+              onChange={e => setNovaUnidade(e.target.value)}
+              className="cadastro-input"
+              placeholder="Nova unidade de medida"
+            />
+            <button type="submit" className="cadastro-btn">Cadastrar</button>
+          </form>
+          {mensagem && <div className="unidades-msg" style={{ color: mensagem.includes('sucesso') ? 'green' : 'red' }}>{mensagem}</div>}
+        </div>
+        <div className="unidades-tabela-wrapper" style={{flex: 2}}>
+          <table className="unidades-tabela">
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {unidades.map(u => (
+                <tr key={u.id_unidade}>
+                  <td>{u.nome}</td>
+                  <td>
+                    <button className="cadastro-btn unidades-btn-excluir" onClick={() => handleExcluir(u.id_unidade)}>
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

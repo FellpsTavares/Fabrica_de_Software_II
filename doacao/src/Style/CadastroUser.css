@@ -1,3 +1,34 @@
+/* Header fixo no topo */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1000;
+  background: #2e8b57;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 64px;
+  box-shadow: 0 2px 8px #0001;
+}
+
+/* Ajuste para o conteúdo não ficar escondido atrás do header fixo */
+.cadastro-container, .unidades-box, .estoque-local-box {
+  margin-top: 72px;
+}
+@media (max-width: 700px) {
+  .header {
+    padding: 0 10px;
+    height: 54px;
+  }
+  .cadastro-container, .unidades-box, .estoque-local-box {
+    margin-top: 60px;
+  }
+}
+
 /* Estrutura Principal */
 .cadastro-container {
   display: flex;
@@ -10,7 +41,7 @@
 }
 
 .cadastro-box {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(198, 240, 221, 0.92); /* verde claro harmonioso */
   border-radius: 8px;
   padding: 40px;
   width: 100%;
@@ -57,7 +88,6 @@
   transition: all 0.4s;
 }
 
-/* Linha Inferior Animada */
 .cadastro-focus-input::before {
   content: "";
   position: absolute;
@@ -90,27 +120,326 @@
 
 .cadastro-btn {
   flex: 1;
-  height: 45px;
-  background: #7fc98f;
-  color: white;
+  height: 48px;
+  background: linear-gradient(90deg, #2e8b57 60%, #7fc98f 100%);
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s;
+  box-shadow: 0 2px 8px 0 rgba(44, 120, 90, 0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  margin-top: 0;
+  letter-spacing: 1px;
 }
 
 .voltar-btn {
-  background: #7fc98f;
-  color: white;
-  border: 1px solid #ddd;
+  background: #c0392b !important;
+  color: #fff !important;
+  border: 1px solid #c0392b !important;
 }
 
 .voltar-btn:hover {
-  background: #6ab07d;
+  background: #a93226 !important;
+  color: #fff !important;
 }
 
 .cadastro-btn:hover {
-  background: #6ab07d;
+  background: linear-gradient(90deg, #256b45 60%, #6ab07d 100%);
+  box-shadow: 0 4px 16px 0 rgba(44, 120, 90, 0.13);
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* NOVO PADRÃO MODERNO CADASTRO USUÁRIO */
+.cadastro-user-modern-left {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-left: 7vw;
+  padding-top: 7vh;
+  max-width: 600px;
+  width: 100%;
+  background: none;
+}
+
+.cadastro-user-modern-form {
+  width: 100%;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.cadastro-user-modern-title {
+  color: #2e8b57;
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  grid-column: 1 / -1;
+}
+
+.cadastro-user-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .cadastro-user-modern-left {
+    padding-left: 0;
+    padding-top: 4vh;
+    max-width: 98vw;
+    align-items: center;
+  }
+  .cadastro-user-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+/* Unidades de Medida - Responsivo e Moderno */
+.unidades-box {
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.unidades-titulo {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #555;
+  font-size: 1.4rem;
+}
+.unidades-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.unidades-form input.cadastro-input {
+  flex: 1 1 180px;
+  min-width: 0;
+  background: #e6f4ea;
+  color: #2e8b57;
+  border-radius: 8px;
+}
+.unidades-form .cadastro-btn {
+  min-width: 110px;
+  height: 40px;
+}
+.unidades-tabela-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+.unidades-tabela {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #eee;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.unidades-tabela th, .unidades-tabela td {
+  padding: 8px 6px;
+  text-align: left;
+}
+.unidades-tabela th {
+  background: #f5f5f5;
+  color: #2e8b57;
+  font-weight: 700;
+}
+.unidades-tabela tr:nth-child(even) {
+  background: #f7faf9;
+}
+.unidades-btn-excluir {
+  background: #c00 !important;
+  color: #fff !important;
+  border-radius: 8px;
+  font-size: 0.98rem;
+  min-width: 80px;
+  height: 36px;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .unidades-box {
+    padding: 18px 4vw;
+    max-width: 98vw;
+  }
+  .unidades-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .unidades-form .cadastro-btn {
+    width: 100%;
+    min-width: 0;
+  }
+  .unidades-tabela th, .unidades-tabela td {
+    padding: 7px 2px;
+    font-size: 0.98rem;
+  }
+}
+
+/* Unidades de Medida - Layout Vertical */
+.unidades-box-vertical {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.unidades-form-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.unidades-form-vertical input.cadastro-input {
+  width: 100%;
+  background: #e6f4ea;
+  color: #2e8b57;
+  border-radius: 8px;
+}
+.unidades-form-vertical .cadastro-btn {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+}
+.unidades-tabela-wrapper {
+  width: 100%;
+  margin-top: 10px;
+}
+.unidades-tabela {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #eee;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.unidades-tabela th, .unidades-tabela td {
+  padding: 8px 6px;
+  text-align: left;
+}
+.unidades-tabela th {
+  background: #f5f5f5;
+  color: #2e8b57;
+  font-weight: 700;
+}
+.unidades-tabela tr:nth-child(even) {
+  background: #f7faf9;
+}
+.unidades-btn-excluir {
+  background: #c00 !important;
+  color: #fff !important;
+  border-radius: 8px;
+  font-size: 0.98rem;
+  min-width: 80px;
+  height: 36px;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .unidades-box-vertical {
+    padding: 18px 4vw;
+    max-width: 98vw;
+  }
+  .unidades-tabela th, .unidades-tabela td {
+    padding: 7px 2px;
+    font-size: 0.98rem;
+  }
+}
+
+/* Estoque Local - Layout Amplo, Moderno e Espaçado */
+.estoque-local-box {
+  max-width: 950px;
+  width: 100%;
+  background: rgba(198, 240, 221, 0.92);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0002;
+  padding: 48px 40px 32px 40px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.estoque-local-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 22px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 44px 0 36px 0;
+}
+.estoque-local-label {
+  font-weight: 600;
+  color: #2e8b57;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+  font-size: 1.1rem;
+}
+.estoque-local-select {
+  padding: 14px;
+  border-radius: 10px;
+  min-width: 260px;
+  border: 1.5px solid #b2dfdb;
+  font-size: 1.08rem;
+  background: #e6f4ea;
+  color: #2e8b57;
+}
+.estoque-local-btn {
+  padding: 14px 32px;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  font-size: 1.08rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.s, box-shadow 0.s;
+}
+.estoque-local-btn.buscar {
+  background: #2e8b57;
+  color: #fff;
+}
+.estoque-local-btn.voltar {
+  background: #888;
+  color: #fff;
+}
+.estoque-local-btn.buscar:hover {
+  background: #256b45;
+}
+.estoque-local-btn.voltar:hover {
+  background: #555;
+}
+@media (max-width: 1100px) {
+  .estoque-local-box {
+    padding: 18px 2vw;
+    max-width: 99vw;
+  }
+  .estoque-local-filtros {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+  .estoque-local-label {
+    min-width: 0;
+  }
+  .estoque-local-select {
+    min-width: 0;
+    width: 100%;
+  }
 }

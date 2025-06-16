@@ -1,0 +1,135 @@
+/* EstoqueLocal.css - estilos exclusivos para a tela de Estoque por Local */
+
+.estoque-local-container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: linear-gradient(120deg, #e6f7ee 0%, #f5fff8 100%), url('../Assets/plano3.png') center/cover no-repeat;
+  padding-top: 90px;
+}
+
+.estoque-local-box {
+  width: 100%;
+  max-width: 1400px;
+  background: #f3faf6;
+  border-radius: 22px;
+  box-shadow: 0 6px 32px #b2dfdb55;
+  padding: 40px 48px 40px 48px;
+  margin: 32px 0 40px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.estoque-local-titulo {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #388e3c;
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.estoque-local-tabela-area {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+.estoque-local-tabela {
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #e6f7ee;
+  overflow-x: auto;
+  margin-bottom: 0;
+}
+
+.estoque-local-tabela thead {
+  background: #e6f7ee;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.estoque-local-tabela th, .estoque-local-tabela td {
+  padding: 18px 16px;
+  text-align: center;
+  font-size: 1.12rem;
+}
+
+.estoque-local-tabela th {
+  color: #388e3c;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.estoque-local-tabela tbody tr {
+  background: #fff;
+  transition: background 0.2s;
+}
+
+.estoque-local-tabela tbody tr:nth-child(even) {
+  background: #f5fff8;
+}
+
+.estoque-local-tabela tbody tr:hover {
+  background: #e6f7ee;
+}
+
+.estoque-local-btn {
+  background: #2e8b57;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-size: 1.12rem;
+  font-weight: 600;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #e6f7ee;
+}
+
+.estoque-local-btn:hover {
+  background: #388e3c;
+}
+
+.estoque-local-btn.voltar {
+  background: #c62828;
+}
+
+.estoque-local-btn.voltar:hover {
+  background: #b71c1c;
+}
+
+.estoque-local-icones {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 900px) {
+  .estoque-local-box {
+    padding: 18px 4vw;
+  }
+  .estoque-local-tabela th, .estoque-local-tabela td {
+    font-size: 1rem;
+    padding: 12px 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .estoque-local-box {
+    padding: 8px 0.5vw;
+  }
+  .estoque-local-titulo {
+    font-size: 1.3rem;
+  }
+}

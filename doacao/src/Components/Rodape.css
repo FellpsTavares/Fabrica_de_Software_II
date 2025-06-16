@@ -1,0 +1,28 @@
+.rodape-sigeas {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  background: rgba(255,255,255,0.92);
+  color: #2e8b57;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 32px 6px 32px;
+  box-shadow: 0 -2px 8px #0001;
+  z-index: 100;
+}
+.rodape-local {
+  font-weight: 500;
+}
+.rodape-versao {
+  font-size: 0.98rem;
+  color: #888;
+}
+@media (max-width: 600px) {
+  .rodape-sigeas {
+    font-size: 0.92rem;
+    padding: 7px 10px 5px 10px;
+  }
+}

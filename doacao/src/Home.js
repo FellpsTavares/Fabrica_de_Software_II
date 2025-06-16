@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Style//Home.css';
 import { icons } from './Assets/Icons';
 import MenuLateral from './Components/MenuLateral';
 import homeLogo from './Assets/home.jpg';
 import plano3 from "./Assets/plano3.png";
+import Rodape from './Components/Rodape';
 
 function Home() {
   const navigate = useNavigate();
   const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleLogout = () => {
     navigate('/');
@@ -58,12 +63,12 @@ function Home() {
       {/* Header */}
       <header className="header">
         <div className="header-left">
-          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/home')} style={{cursor: 'pointer'}} />
           <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
           </button>
         </div>
-        <h2>Gerenciamento de Doações</h2>
+        <h2>Assistência Social Digital</h2>
         <div className="header-user-area">
           <span className="user-info">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
@@ -77,8 +82,8 @@ function Home() {
 
       {/* Main Content */}
       <main className="main-content">
-        <h1>Bem-vindo ao <strong>Gerenciamento de Doações</strong></h1>
-        <p className="subtitle">Facilitando o controle de entradas e saídas de doações</p>
+        <h1>Bem-vindo ao <strong>Assistência Social Digital</strong></h1>
+        <p className="subtitle">Facilitando o controle e garantindo a segurança de seus dados</p>
 
         <div className="options-grid">
           <div className="option-card" onClick={goToCadastro}>
@@ -136,6 +141,7 @@ function Home() {
           </div>
         </div>
       </main>
+      <Rodape />
     </div>
   );
 }

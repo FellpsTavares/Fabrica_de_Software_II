@@ -1,5 +1,5 @@
 import './Style/Login.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import newLogo from "./Assets/newoldLogo.png";
 import ifg from "./Assets/IFG.png";
@@ -11,6 +11,10 @@ function Login({ setIsAuthenticated }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();

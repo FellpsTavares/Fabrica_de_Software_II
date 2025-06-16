@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Style/CadastroResponsavel.css'; // Importa o CSS correspondente
 import fundo from './Assets/Fundo.png'; // Reutiliza o fundo se aplicável
@@ -12,6 +12,10 @@ function CadastroResponsavel() {
     cpf_responsavel: '',
     telefone_responsavel: ''
   });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

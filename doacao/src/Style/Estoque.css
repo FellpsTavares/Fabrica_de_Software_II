@@ -1,0 +1,135 @@
+/* Estoque.css - estilos exclusivos para a tela de Estoque */
+
+.estoque-container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: linear-gradient(120deg, #e6f7ee 0%, #f5fff8 100%);
+  padding-top: 0; /* Removido padding-top/margin-top para evitar espaço em branco */
+}
+
+.estoque-box {
+  width: 100%;
+  max-width: 1400px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 32px #b2dfdb55;
+  padding: 32px 40px 32px 40px;
+  margin: 24px 0 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.estoque-titulo {
+  text-align: center;
+  margin-bottom: 18px;
+  color: #388e3c;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.estoque-tabela-area {
+  width: 100%;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  align-items: center;
+}
+
+.estoque-tabela {
+  width: 100%;
+  background: #f8fff9;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px #e6f7ee;
+  overflow-x: auto;
+  margin-bottom: 0;
+}
+
+.estoque-tabela thead {
+  background: #e6f7ee;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.estoque-tabela th, .estoque-tabela td {
+  padding: 14px 12px;
+  text-align: center;
+  font-size: 1.08rem;
+}
+
+.estoque-tabela th {
+  color: #388e3c;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.estoque-tabela tbody tr {
+  background: #fff;
+  transition: background 0.2s;
+}
+
+.estoque-tabela tbody tr:nth-child(even) {
+  background: #f5fff8;
+}
+
+.estoque-tabela tbody tr:hover {
+  background: #e6f7ee;
+}
+
+.estoque-btn {
+  background: #2e8b57;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin: 0 8px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #e6f7ee;
+}
+
+.estoque-btn:hover {
+  background: #388e3c;
+}
+
+.estoque-btn.voltar {
+  background: #c62828;
+}
+
+.estoque-btn.voltar:hover {
+  background: #b71c1c;
+}
+
+.estoque-icones {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .estoque-box {
+    padding: 18px 4vw;
+  }
+  .estoque-tabela th, .estoque-tabela td {
+    font-size: 0.98rem;
+    padding: 10px 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .estoque-box {
+    padding: 8px 0.5vw;
+  }
+  .estoque-titulo {
+    font-size: 1.2rem;
+  }
+}
