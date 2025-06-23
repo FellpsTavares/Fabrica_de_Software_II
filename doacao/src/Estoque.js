@@ -58,7 +58,24 @@ function Estoque() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  // Função para upload do recibo
+  const handleUploadRecibo = async (file, id_movimentacao) => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('id_movimentacao', id_movimentacao);
+    try {
+      await axios.post('http://127.0.0.1:8000/upload_recibo/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert('Recibo anexado com sucesso!');
+    } catch (err) {
+      alert('Erro ao anexar recibo.');
+    }
+  };
+
   // Nova ordem: Produto | Quantidade | Usuário | Membro | Data | Tipo
+  // Adiciona coluna para anexar recibo na tabela de saídas
   const renderLinha = (mov, tipo, idx) => (
     <tr key={mov.id_movimentacao} style={{ background: idx % 2 === 0 ? '#f9f9f9' : '#fff' }}>
       <td style={{ padding: 8 }}>{mov.produto_nome}</td>
@@ -73,6 +90,24 @@ function Estoque() {
           <span style={{ color: '#c00', fontWeight: 'bold' }}>Saída &#8595;</span>
         )}
       </td>
+      {tipo === 'saida' && (
+        <td style={{ padding: 8, textAlign: 'center', verticalAlign: 'middle' }}>
+          <label htmlFor={`file-upload-${mov.id_movimentacao}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', margin: 0 }}>
+            <button type="button" title="Anexar Recibo" style={{ background: '#7fc98f', border: 'none', borderRadius: 6, padding: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="7" width="18" height="13" rx="2" fill="#43a047" stroke="#388e3c" strokeWidth="1.5"/>
+                <path d="M8 3h8a2 2 0 0 1 2 2v2" stroke="#388e3c" strokeWidth="1.5"/>
+                <path d="M12 12v4" stroke="#fff" strokeWidth="2.2"/>
+                <path d="M10 14h4" stroke="#fff" strokeWidth="2.2"/>
+              </svg>
+            </button>
+            <input id={`file-upload-${mov.id_movimentacao}`} type="file" accept="application/pdf,image/*" style={{ display: 'none' }} onChange={e => {
+              const file = e.target.files[0];
+              handleUploadRecibo(file, mov.id_movimentacao);
+            }} />
+          </label>
+        </td>
+      )}
     </tr>
   );
 
@@ -140,11 +175,12 @@ function Estoque() {
                     <th style={{ padding: 10, borderBottom: '2px solid #c00' }}>Membro</th>
                     <th style={{ padding: 10, borderBottom: '2px solid #c00' }}>Data</th>
                     <th style={{ padding: 10, borderBottom: '2px solid #c00' }}>Tipo</th>
+                    <th style={{ padding: 10, borderBottom: '2px solid #c00', textAlign: 'center' }}>Recibo</th>
                   </tr>
                 </thead>
                 <tbody>
                   {saidas.length === 0 ? (
-                    <tr><td colSpan={6} style={{ textAlign: 'center', color: '#aaa' }}>Nenhuma saída registrada</td></tr>
+                    <tr><td colSpan={7} style={{ textAlign: 'center', color: '#aaa' }}>Nenhuma saída registrada</td></tr>
                   ) : (
                     saidas.map((mov, idx) => renderLinha(mov, 'saida', idx))
                   )}

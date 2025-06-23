@@ -36,8 +36,14 @@
   color: #2e8b57;
   outline: none !important;
   border-radius: 8px;
-  box-shadow: none !important;
+  /* box-shadow: none !important; */
   transition: background 0.2s;
+}
+
+/* Oculta o placeholder padrão do input para evitar duplicidade visual */
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
 }
 
 /* Estilo específico para selects (mantido para consistência, mas não usado aqui) */
@@ -174,6 +180,27 @@
 /* Cor das opções no select (mantido para consistência) */
 .cadastro-input-wrap select.cadastro-input option {
   color: #333; 
+}
+
+.btn-lupa {
+  min-width: 32px;
+  width: 32px;
+  max-width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7fc98f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  transition: background 0.2s;
+  box-shadow: none;
+}
+
+.btn-lupa:hover {
+  background: #6ab07d;
 }
 
 @media (max-width: 700px) {

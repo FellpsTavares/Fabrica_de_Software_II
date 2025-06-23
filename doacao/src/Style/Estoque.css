@@ -115,6 +115,12 @@
   margin-bottom: 10px;
 }
 
+/* Oculta o placeholder padrão do input para evitar duplicidade visual */
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
+}
+
 @media (max-width: 900px) {
   .estoque-box {
     padding: 18px 4vw;

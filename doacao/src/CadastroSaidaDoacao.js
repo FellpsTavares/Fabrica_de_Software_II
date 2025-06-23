@@ -6,6 +6,7 @@ import MenuLateral from './Components/MenuLateral';
 import homeLogo from './Assets/home.jpg';
 import plano3 from "./Assets/plano3.png";
 import Rodape from './Components/Rodape';
+import ReciboSaidaDoacao from './ReciboSaidaDoacao';
 
 function CadastroSaidaDoacao() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function CadastroSaidaDoacao() {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
   const [estoqueId, setEstoqueId] = useState('');
+  const [recibo, setRecibo] = useState(null);
 
   // Buscar estoque do usuário logado ao montar
   React.useEffect(() => {
@@ -106,6 +108,25 @@ function CadastroSaidaDoacao() {
         usuario_id,
         estoque_id: estoqueId
       });
+      // Buscar dados para o recibo
+      const produto = produtos.find(p => String(p.id_produto) === String(produtoId));
+      const unidade = produto?.unidade_nome || '';
+      const nomeProduto = produto?.nome || '';
+      // Buscar nome da família do membro
+      let nomeFamilia = '';
+      try {
+        const resMembro = await axios.get(`http://127.0.0.1:8000/membro_detalhe/${membroId}/`);
+        nomeFamilia = resMembro.data?.familia_nome || '';
+      } catch {}
+      setRecibo({
+        usuario: usuarioLogado?.nome || 'Usuário',
+        pessoa: membroNome,
+        quantidade: quantidadeNum,
+        unidade,
+        produto: nomeProduto,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        nomeFamilia
+      });
       setSucesso('Saída registrada com sucesso!');
       setCpf(''); setProdutoId(''); setQuantidade(''); setMembroId(null);
     } catch (err) {
@@ -165,18 +186,31 @@ function CadastroSaidaDoacao() {
         <div className="cadastro-box">
           <form onSubmit={handleSubmit} className="cadastro-form">
             <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Saída de Doação</h2>
-            <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', gap: 10}}>
+            <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', gap: 8}}>
               <input
                 type="text"
                 name="cpf"
                 value={cpf}
-                onChange={e => setCpf(e.target.value)}
+                onChange={e => {
+                  // Máscara simples de CPF: 000.000.000-00
+                  let v = e.target.value.replace(/\D/g, '');
+                  if (v.length > 11) v = v.slice(0, 11);
+                  v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                  v = v.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+                  v = v.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+                  setCpf(v);
+                }}
                 className={`cadastro-input ${cpf ? 'has-val' : ''}`}
-                placeholder="CPF da Pessoa que irá retirar a doação"
-                style={{flex: 1}}
+                required
+                style={{flex: 1, minWidth: 0}}
+                maxLength={14}
+                inputMode="numeric"
+                pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                autoComplete="off"
               />
-              <button type="button" className="cadastro-btn" onClick={handleBuscarMembro}>
-                Buscar CPF
+              <span className="cadastro-focus-input" data-placeholder="CPF da Pessoa que irá retirar a doação"></span>
+              <button type="button" className="cadastro-btn btn-lupa" onClick={handleBuscarMembro} title="Buscar CPF" style={{minWidth: 32, width: 32, height: 32, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </button>
             </div>
             {erroCpf && <div style={{color: 'red', marginBottom: 10}}>{erroCpf}</div>}
@@ -188,12 +222,14 @@ function CadastroSaidaDoacao() {
                 value={produtoId}
                 onChange={e => setProdutoId(e.target.value)}
                 className={`cadastro-input ${produtoId ? 'has-val' : ''}`}
+                required
               >
                 <option value="">Selecione o Produto</option>
                 {produtos.map(prod => (
                   <option key={prod.id_produto} value={prod.id_produto}>{prod.nome}</option>
                 ))}
               </select>
+              <span className="cadastro-focus-input" data-placeholder="Produto"></span>
             </div>
 
             <div className="cadastro-input-wrap">
@@ -203,9 +239,10 @@ function CadastroSaidaDoacao() {
                 value={quantidade}
                 onChange={e => setQuantidade(e.target.value)}
                 className={`cadastro-input ${quantidade ? 'has-val' : ''}`}
-                placeholder="Quantidade"
+                required
                 min="0.01" step="0.01"
               />
+              <span className="cadastro-focus-input" data-placeholder="Quantidade"></span>
             </div>
 
             {erro && <div style={{color: 'red', marginBottom: 10}}>{erro}</div>}
@@ -223,6 +260,18 @@ function CadastroSaidaDoacao() {
         </div>
       </div>
       <Rodape />
+      {recibo && (
+        <ReciboSaidaDoacao
+          usuario={recibo.usuario}
+          pessoa={recibo.pessoa}
+          quantidade={recibo.quantidade}
+          unidade={recibo.unidade}
+          produto={recibo.produto}
+          dataHora={recibo.dataHora}
+          nomeFamilia={recibo.nomeFamilia}
+          onClose={() => setRecibo(null)}
+        />
+      )}
     </>
   );
 }

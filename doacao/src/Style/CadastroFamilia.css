@@ -120,6 +120,12 @@
   background: #6ab07d;
 }
 
+/* Oculta o placeholder padrão do input para evitar duplicidade visual */
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
+}
+
 /* Responsividade */
 @media (max-width: 900px) {
   .cadastro-box {

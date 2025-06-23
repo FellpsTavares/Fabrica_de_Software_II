@@ -464,5 +464,11 @@ html {
   }
 }
 
+/* Oculta o placeholder padrão do input para evitar duplicidade visual */
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
+}
+
 
 

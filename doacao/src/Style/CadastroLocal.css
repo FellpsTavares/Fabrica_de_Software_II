@@ -40,6 +40,12 @@
   transition: background 0.2s;
 }
 
+/* Oculta o placeholder padrão dos inputs em CadastroLocal */
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
+}
+
 /* Efeito de foco para mudar a cor de fundo */
 .cadastro-input:focus {
   background: #d2eedd;

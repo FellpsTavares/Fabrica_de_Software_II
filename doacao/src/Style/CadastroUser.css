@@ -68,6 +68,11 @@
   box-shadow: none !important; /* Remove sombras */
 }
 
+.cadastro-input::placeholder {
+  color: transparent;
+  opacity: 1;
+}
+
 /* Placeholder Animado */
 .cadastro-focus-input {
   position: absolute;
