@@ -56,7 +56,7 @@ function CadastroUser() {
       // em caso de sucesso…
       console.log('Resposta do servidor:', res.data);
       alert(res.data.message || 'Cadastro bem-sucedido!');
-      navigate('/login');  // ou para onde quiser redirecionar
+      navigate('/Home'); 
 
     } catch (err) {
       console.error('Erro ao cadastrar:', err.response?.data || err.message);
@@ -93,7 +93,7 @@ function CadastroUser() {
         </div>
       </header>
       <div className="cadastro-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="cadastro-user-modern-left">
+        <div className="cadastro-box" style={{ maxWidth: 500, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 12, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
           <form onSubmit={handleSubmit} className="cadastro-user-modern-form grid-form">
             <h2 className="cadastro-user-modern-title">Cadastro de Usuário</h2>
             <div className="cadastro-user-grid">

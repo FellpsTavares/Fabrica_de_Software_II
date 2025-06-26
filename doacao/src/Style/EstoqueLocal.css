@@ -13,7 +13,7 @@
 .estoque-local-box {
   width: 100%;
   max-width: 1400px;
-  background: #f3faf6;
+  background: rgba(198, 240, 221, 0.92); /* igual ao .cadastro-box */
   border-radius: 22px;
   box-shadow: 0 6px 32px #b2dfdb55;
   padding: 40px 48px 40px 48px;

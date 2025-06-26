@@ -77,10 +77,14 @@ function EstoqueLocal() {
                 <option key={est.id_estoque} value={est.id_estoque}>{est.nome}</option>
               ))}
             </select>
-            <button onClick={buscarEstoque} className="estoque-local-btn buscar" title="Buscar produtos do estoque">
-              {icons.estoque} Buscar
+            <button onClick={buscarEstoque} className="estoque-local-btn buscar" title="Buscar produtos do estoque" style={{ minWidth: 120, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#388e3c', color: '#fff', fontWeight: 600, borderRadius: 8, border: 'none', fontSize: 16, cursor: 'pointer' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: 4 }}>
+                <circle cx="11" cy="11" r="7"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              Buscar
             </button>
-            <button onClick={() => navigate(-1)} className="estoque-local-btn voltar" title="Voltar para tela anterior">
+            <button onClick={() => navigate(-1)} className="estoque-local-btn voltar" title="Voltar para tela anterior" style={{ minWidth: 120, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#e57373', color: '#fff', fontWeight: 600, borderRadius: 8, border: 'none', fontSize: 16, cursor: 'pointer' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
               Voltar
             </button>

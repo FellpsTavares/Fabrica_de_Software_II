@@ -7,6 +7,7 @@ import homeLogo from './Assets/home.jpg';
 import plano3 from "./Assets/plano3.png";
 import Rodape from './Components/Rodape';
 import ReciboSaidaDoacao from './ReciboSaidaDoacao';
+import './Style/CadastroSaidaDoacao.css';
 
 function CadastroSaidaDoacao() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ function CadastroSaidaDoacao() {
   const [quantidade, setQuantidade] = useState('');
   const [membroId, setMembroId] = useState(null);
   const [membroNome, setMembroNome] = useState('');
+  const [nomeFamilia, setNomeFamilia] = useState('');
   const [erroCpf, setErroCpf] = useState('');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
@@ -59,6 +61,7 @@ function CadastroSaidaDoacao() {
     setErroCpf('');
     setMembroId(null);
     setMembroNome('');
+    setNomeFamilia('');
     if (!cpf) {
       setErroCpf('Informe o CPF!');
       return;
@@ -68,6 +71,13 @@ function CadastroSaidaDoacao() {
       if (res.data && res.data.id_membro) {
         setMembroId(res.data.id_membro);
         setMembroNome(res.data.nome);
+        // Buscar nome da família do membro (usando buscar_pessoa_por_cpf)
+        try {
+          const resFamilia = await axios.post('http://127.0.0.1:8000/buscar_pessoa_por_cpf/', { cpf });
+          setNomeFamilia(resFamilia.data?.familia?.nome_familia || '');
+        } catch {
+          setNomeFamilia('');
+        }
       } else {
         setErroCpf('CPF não encontrado ou não autorizado!');
       }
@@ -112,12 +122,6 @@ function CadastroSaidaDoacao() {
       const produto = produtos.find(p => String(p.id_produto) === String(produtoId));
       const unidade = produto?.unidade_nome || '';
       const nomeProduto = produto?.nome || '';
-      // Buscar nome da família do membro
-      let nomeFamilia = '';
-      try {
-        const resMembro = await axios.get(`http://127.0.0.1:8000/membro_detalhe/${membroId}/`);
-        nomeFamilia = resMembro.data?.familia_nome || '';
-      } catch {}
       setRecibo({
         usuario: usuarioLogado?.nome || 'Usuário',
         pessoa: membroNome,
@@ -185,7 +189,7 @@ function CadastroSaidaDoacao() {
       <div className="cadastro-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5`, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="cadastro-box">
           <form onSubmit={handleSubmit} className="cadastro-form">
-            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Saída de Doação</h2>
+            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Registro de Doação</h2>
             <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', gap: 8}}>
               <input
                 type="text"
@@ -214,7 +218,17 @@ function CadastroSaidaDoacao() {
               </button>
             </div>
             {erroCpf && <div style={{color: 'red', marginBottom: 10}}>{erroCpf}</div>}
-            {membroNome && <div style={{color: 'green', marginBottom: 10}}>Membro válido! Nome: {membroNome}</div>}
+            {membroNome && nomeFamilia && (
+              <div style={{color: 'green', marginBottom: 10}}>
+                Membro válido! Nome: {membroNome} <br />
+                <span style={{color: '#388e3c'}}>Membro da família: <b>{nomeFamilia}</b></span>
+              </div>
+            )}
+            {membroNome && !nomeFamilia && (
+              <div style={{color: 'green', marginBottom: 10}}>
+                Membro válido! Nome: {membroNome}
+              </div>
+            )}
 
             <div className="cadastro-input-wrap">
               <select
@@ -224,7 +238,7 @@ function CadastroSaidaDoacao() {
                 className={`cadastro-input ${produtoId ? 'has-val' : ''}`}
                 required
               >
-                <option value="">Selecione o Produto</option>
+                <option value=""> </option>
                 {produtos.map(prod => (
                   <option key={prod.id_produto} value={prod.id_produto}>{prod.nome}</option>
                 ))}

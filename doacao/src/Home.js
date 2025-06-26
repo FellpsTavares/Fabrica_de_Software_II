@@ -112,7 +112,7 @@ function Home() {
 
           <div className="option-card" onClick={goToSaidaDoacao}>
             {icons.saida}
-            <h3>Saídas de Doações</h3>
+            <h3>Registro de Doações</h3>
             <p>Registrar retirada de doações</p>
           </div>
 

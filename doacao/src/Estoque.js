@@ -6,6 +6,8 @@ import homeLogo from './Assets/home.jpg';
 import plano3 from "./Assets/plano3.png";
 import { useNavigate } from 'react-router-dom';
 import Rodape from './Components/Rodape';
+import ReciboSaidaDoacao from './ReciboSaidaDoacao';
+import jsPDF from 'jspdf';
 
 function Estoque() {
   const [entradas, setEntradas] = useState([]);
@@ -74,6 +76,53 @@ function Estoque() {
     }
   };
 
+  // Função para gerar PDF do recibo de saída
+  const gerarReciboPDF = async (mov) => {
+    let nomeFamilia = mov.familia_nome || mov.nome_familia || null;
+    // Se não veio o nome da família, busca via membro_id -> familia_id -> nome_familia
+    if (!nomeFamilia && mov.membro_id) {
+      let familiaId = null;
+      try {
+        // Busca membro_familiar pelo membro_id
+        const resMembro = await axios.get(`http://127.0.0.1:8000/membro_familiar/${mov.membro_id}/`);
+        if (resMembro.data && resMembro.data.familia_id) {
+          familiaId = resMembro.data.familia_id;
+        }
+        // Busca nome_familia na tabela familia
+        if (familiaId) {
+          const resFamilia = await axios.get(`http://127.0.0.1:8000/familia/${familiaId}/`);
+          if (resFamilia.data && resFamilia.data.nome_familia) {
+            nomeFamilia = resFamilia.data.nome_familia;
+          }
+        }
+      } catch (e) {}
+    }
+    if (!nomeFamilia) nomeFamilia = 'Familia Buscapé';
+
+    const doc = new jsPDF();
+    doc.setFont('helvetica');
+    doc.setFontSize(16);
+    doc.text('Recibo de Doação', 105, 20, { align: 'center' });
+    doc.setFontSize(12);
+    let y = 40;
+    const usuario = mov.usuario_nome || '-';
+    const pessoa = mov.membro_nome || '-';
+    const quantidade = mov.quantidade || '-';
+    const unidade = mov.unidade_nome || '-';
+    const produto = mov.produto_nome || '-';
+    const dataHora = new Date(mov.data_movimentacao).toLocaleString('pt-BR');
+    doc.text(`Eu, ${usuario}, informo que ${pessoa} recebeu ${quantidade} ${unidade} do produto ${produto} aos ${dataHora}, responsável pela família: ${nomeFamilia}.`, 15, y, { maxWidth: 180 });
+    y += 30;
+    const assinaturaInicio = 35;
+    const assinaturaFim = assinaturaInicio + 140;
+    doc.line(assinaturaInicio, y, assinaturaFim, y);
+    y += 10;
+    doc.text('Assinatura', assinaturaInicio + 50, y);
+    const pdfBlob = doc.output('blob');
+    const blobUrl = URL.createObjectURL(new Blob([pdfBlob], { type: 'application/pdf' }));
+    window.open(blobUrl, '_blank');
+  };
+
   // Nova ordem: Produto | Quantidade | Usuário | Membro | Data | Tipo
   // Adiciona coluna para anexar recibo na tabela de saídas
   const renderLinha = (mov, tipo, idx) => (
@@ -91,9 +140,9 @@ function Estoque() {
         )}
       </td>
       {tipo === 'saida' && (
-        <td style={{ padding: 8, textAlign: 'center', verticalAlign: 'middle' }}>
+        <td style={{ padding: 8, textAlign: 'center', verticalAlign: 'middle', display: 'flex', gap: 8, justifyContent: 'center' }}>
           <label htmlFor={`file-upload-${mov.id_movimentacao}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', margin: 0 }}>
-            <button type="button" title="Anexar Recibo" style={{ background: '#7fc98f', border: 'none', borderRadius: 6, padding: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+            <button type="button" title="Anexar Recibo" style={{ background: '#7fc98f', border: 'none', borderRadius: 6, padding: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', width: 40, height: 40 }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="7" width="18" height="13" rx="2" fill="#43a047" stroke="#388e3c" strokeWidth="1.5"/>
                 <path d="M8 3h8a2 2 0 0 1 2 2v2" stroke="#388e3c" strokeWidth="1.5"/>
@@ -106,6 +155,14 @@ function Estoque() {
               handleUploadRecibo(file, mov.id_movimentacao);
             }} />
           </label>
+          <button type="button" title="Gerar Recibo PDF" onClick={() => gerarReciboPDF(mov)} style={{ background: '#7fc98f', border: 'none', borderRadius: 6, padding: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', width: 40, height: 40 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="3" fill="#43a047" stroke="#388e3c" strokeWidth="1.5"/>
+              <path d="M8 8h8v8H8z" fill="#fff" stroke="#388e3c" strokeWidth="1.5"/>
+              <path d="M12 12v4" stroke="#388e3c" strokeWidth="2.2"/>
+              <path d="M10 14h4" stroke="#388e3c" strokeWidth="2.2"/>
+            </svg>
+          </button>
         </td>
       )}
     </tr>
@@ -137,7 +194,7 @@ function Estoque() {
         </div>
       </header>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90, background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
-        <div className="cadastro-box" style={{ maxWidth: 1100, width: '100%', background: 'rgba(255,255,255,0.97)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
+        <div className="cadastro-box" style={{ maxWidth: 1100, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
           <h2 style={{ color: '#2e8b57', marginBottom: 20 }}>Movimentação de Estoque do Seu Local</h2>
           <div style={{ marginBottom: 40 }}>
             <h3 style={{ color: '#2e8b57', borderBottom: '2px solid #2e8b57', paddingBottom: 8 }}>Entradas</h3>
