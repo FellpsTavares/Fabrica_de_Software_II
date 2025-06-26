@@ -120,10 +120,128 @@
   background: #6ab07d;
 }
 
-/* Oculta o placeholder padrão do input para evitar duplicidade visual */
+/* Estilos exclusivos para CadastroFamilia */
+
+.cadastro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+}
+
+.cadastro-box {
+  background: rgba(198, 240, 221, 0.92);
+  border-radius: 8px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.cadastro-input-wrap {
+  position: relative;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #adadad;
+}
+
+.cadastro-input {
+  width: 100%;
+  height: 40px;
+  border: none;
+  background: transparent;
+  padding: 0 5px;
+  font-size: 15px;
+  color: #333;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .cadastro-input::placeholder {
   color: transparent;
   opacity: 1;
+}
+
+.cadastro-focus-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.cadastro-focus-input::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 13px;
+  left: 5px;
+  font-size: 15px;
+  color: #999;
+  transition: all 0.4s;
+}
+
+.cadastro-focus-input::before {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #7fc98f;
+  transition: all 0.4s;
+}
+
+.cadastro-input:focus + .cadastro-focus-input::before {
+  width: 100%;
+}
+
+.cadastro-input:focus + .cadastro-focus-input::after,
+.has-val + .cadastro-focus-input::after {
+  top: -15px;
+  font-size: 13px;
+  color: #7fc98f;
+}
+
+.cadastro-btn-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+.cadastro-btn {
+  flex: 1;
+  height: 48px;
+  background: linear-gradient(90deg, #2e8b57 60%, #7fc98f 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(44, 120, 90, 0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  margin-top: 0;
+  letter-spacing: 1px;
+}
+
+.voltar-btn {
+  background: #c0392b !important;
+  color: #fff !important;
+  border: 1px solid #c0392b !important;
+}
+
+.voltar-btn:hover {
+  background: #a93226 !important;
+  color: #fff !important;
+}
+
+.cadastro-btn:hover {
+  background: linear-gradient(90deg, #256b45 60%, #6ab07d 100%);
+  box-shadow: 0 4px 16px 0 rgba(44, 120, 90, 0.13);
+  transform: translateY(-2px) scale(1.03);
 }
 
 /* Responsividade */

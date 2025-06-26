@@ -1,6 +1,6 @@
-/* Estilos exclusivos para CadastroResponsavel */
+/* Estilos exclusivos para CadastroMembroFamiliar */
 
-.cadastro-container {
+.cadastro-membro-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,7 +10,7 @@
   padding: 20px;
 }
 
-.cadastro-box {
+.cadastro-membro-box {
   background: rgba(198, 240, 221, 0.92);
   border-radius: 8px;
   padding: 40px;
@@ -18,13 +18,13 @@
   max-width: 400px;
 }
 
-.cadastro-input-wrap {
+.cadastro-membro-input-wrap {
   position: relative;
   margin-bottom: 30px;
   border-bottom: 2px solid #adadad;
 }
 
-.cadastro-input {
+.cadastro-membro-input {
   width: 100%;
   height: 40px;
   border: none;
@@ -36,14 +36,12 @@
   box-shadow: none !important;
 }
 
-/* Oculta o placeholder padrão do input para evitar duplicidade visual */
-.cadastro-input::placeholder {
+.cadastro-membro-input::placeholder {
   color: transparent;
   opacity: 1;
 }
 
-/* Placeholder/Label Animado (para inputs normais) */
-.cadastro-focus-input {
+.cadastro-membro-focus-input {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -52,7 +50,7 @@
   pointer-events: none;
 }
 
-.cadastro-focus-input::after {
+.cadastro-membro-focus-input::after {
   content: attr(data-placeholder);
   position: absolute;
   top: 13px;
@@ -62,8 +60,7 @@
   transition: all 0.4s;
 }
 
-/* Linha Inferior Animada */
-.cadastro-focus-input::before {
+.cadastro-membro-focus-input::before {
   content: "";
   position: absolute;
   bottom: -2px;
@@ -74,26 +71,24 @@
   transition: all 0.4s;
 }
 
-/* Efeitos de Foco/Preenchimento (para inputs normais) */
-.cadastro-input:focus + .cadastro-focus-input::before {
+.cadastro-membro-input:focus + .cadastro-membro-focus-input::before {
   width: 100%;
 }
 
-.cadastro-input:focus + .cadastro-focus-input::after,
-.has-val + .cadastro-focus-input::after {
+.cadastro-membro-input:focus + .cadastro-membro-focus-input::after,
+.has-val + .cadastro-membro-focus-input::after {
   top: -15px;
   font-size: 13px;
   color: #7fc98f;
 }
 
-/* Botões */
-.cadastro-btn-container {
+.cadastro-membro-btn-container {
   display: flex;
   gap: 15px;
   margin-top: 40px;
 }
 
-.cadastro-btn {
+.cadastro-membro-btn {
   flex: 1;
   height: 48px;
   background: linear-gradient(90deg, #2e8b57 60%, #7fc98f 100%);
@@ -110,27 +105,31 @@
   letter-spacing: 1px;
 }
 
-.voltar-btn {
-  background: #c0392b !important;
+.voltar-btn, .voltar-btn-header {
+  background: #2e8b57 !important;
   color: #fff !important;
-  border: 1px solid #c0392b !important;
+  border: 1px solid #2e8b57 !important;
+  border-radius: 10px !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(44, 120, 90, 0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
 }
 
-.voltar-btn:hover {
-  background: #a93226 !important;
+.voltar-btn:hover, .voltar-btn-header:hover {
+  background: #2e8b57 !important;
   color: #fff !important;
 }
 
-.cadastro-btn:hover {
+.cadastro-membro-btn:hover {
   background: linear-gradient(90deg, #256b45 60%, #6ab07d 100%);
   box-shadow: 0 4px 16px 0 rgba(44, 120, 90, 0.13);
   transform: translateY(-2px) scale(1.03);
 }
-
-@media (max-width: 700px) {
-  .cadastro-box {
-    padding: 18px 4vw;
-    max-width: 98vw;
-  }
-}
-

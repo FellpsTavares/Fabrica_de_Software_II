@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './Style/CadastroUser.css';
-import fundo from './Assets/Fundo.png';
+import './Style/CadastroMembroFamiliar.css';
+import plano3 from './Assets/plano3.png';
+import homeLogo from './Assets/home.jpg';
+import MenuLateral from './Components/MenuLateral';
+import Rodape from './Components/Rodape';
 
 function CadastroMembroFamiliar() {
   const navigate = useNavigate();
@@ -16,6 +19,9 @@ function CadastroMembroFamiliar() {
     pode_receber: false,
     familia_id: familiaIdParam || ''
   });
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,7 +33,6 @@ function CadastroMembroFamiliar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Verifica usuário logado
     const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
     const usuario_id = usuarioLogado?.id;
     if (!usuario_id) {
@@ -48,76 +53,98 @@ function CadastroMembroFamiliar() {
   };
 
   return (
-    <div className="cadastro-container" style={{ backgroundImage: `url(${fundo})` }}>
-      <div className="cadastro-box">
-        <form onSubmit={handleSubmit} className="cadastro-form">
+    <div className="cadastro-membro-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
+      <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <header className="header">
+        <div className="header-left">
+          <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/home')} style={{cursor: 'pointer'}} />
+          <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </button>
+        </div>
+        <h2>Assistência Social Digital</h2>
+        <div className="header-user-area">
+          <span className="user-info">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
+            {usuarioLogado?.nome || 'Usuário'}
+          </span>
+          <button className="voltar-btn-header" onClick={() => navigate(-1)} title="Voltar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
+          </button>
+        </div>
+      </header>
+      <div className="cadastro-membro-box">
+        <form onSubmit={handleSubmit} className="cadastro-membro-form">
           <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#555' }}>Cadastro de Membro Familiar</h2>
           {form.familia_id && (
-            <div className="cadastro-input-wrap">
+            <div className="cadastro-membro-input-wrap">
               <input
                 type="text"
                 name="familia_id"
                 value={form.familia_id}
-                className="cadastro-input"
                 readOnly
-                style={{ background: '#f0f0f0', color: '#888' }}
+                className="cadastro-membro-input"
               />
-              <span className="cadastro-focus-input" data-placeholder="ID da Família"></span>
+              <span className="cadastro-membro-focus-input" data-placeholder="ID da Família" />
             </div>
           )}
-          <div className="cadastro-input-wrap">
+          <div className="cadastro-membro-input-wrap">
             <input
               type="text"
               name="nome"
               value={form.nome}
               onChange={handleChange}
-              className={`cadastro-input ${form.nome ? 'has-val' : ''}`}
+              className="cadastro-membro-input"
               required
             />
-            <span className="cadastro-focus-input" data-placeholder="Nome do Membro"></span>
+            <span className="cadastro-membro-focus-input" data-placeholder="Nome do Membro" />
           </div>
-          <div className="cadastro-input-wrap">
+          <div className="cadastro-membro-input-wrap">
             <input
               type="text"
               name="cpf"
               value={form.cpf}
               onChange={handleChange}
-              className={`cadastro-input ${form.cpf ? 'has-val' : ''}`}
+              className="cadastro-membro-input"
               required
             />
-            <span className="cadastro-focus-input" data-placeholder="CPF"></span>
+            <span className="cadastro-membro-focus-input" data-placeholder="CPF" />
           </div>
-          <div className="cadastro-input-wrap">
+          <div className="cadastro-membro-input-wrap">
             <input
               type="date"
               name="data_nascimento"
               value={form.data_nascimento}
               onChange={handleChange}
-              className={`cadastro-input ${form.data_nascimento ? 'has-val' : ''}`}
+              className="cadastro-membro-input"
               required
             />
-            <span className="cadastro-focus-input" data-placeholder="Data de Nascimento"></span>
+            <span className="cadastro-membro-focus-input" data-placeholder="Data de Nascimento" />
           </div>
-          <div className="cadastro-input-wrap" style={{display: 'flex', alignItems: 'center', marginBottom: 20}}>
-            <input
-              type="checkbox"
-              name="pode_receber"
-              checked={form.pode_receber}
-              onChange={handleChange}
-              style={{width: '20px', height: '20px', marginRight: '10px'}}
-            />
-            <label htmlFor="pode_receber" style={{fontSize: '16px', color: '#555'}}>Autorizado a retirar doações</label>
+          <div className="cadastro-membro-input-wrap" style={{ border: 'none', marginBottom: 0 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input
+                type="checkbox"
+                name="pode_receber"
+                checked={form.pode_receber}
+                onChange={handleChange}
+                style={{ width: 18, height: 18 }}
+              />
+              Pode receber doação
+            </label>
           </div>
-          <div className="cadastro-btn-container">
-            <button type="button" className="cadastro-btn voltar-btn" onClick={() => navigate(-1)}>
+          <div className="cadastro-membro-btn-container">
+            <button type="button" className="voltar-btn" style={{ order: 1, minWidth: 120 }} onClick={() => navigate(-1)}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><polyline points="15 18 9 12 15 6"/></svg>
               Voltar
             </button>
-            <button type="submit" className="cadastro-btn">
-              Cadastrar Membro
+            <button type="submit" className="cadastro-membro-btn" style={{ order: 2, minWidth: 120 }}>
+              Cadastrar
             </button>
           </div>
         </form>
       </div>
+      <Rodape />
     </div>
   );
 }

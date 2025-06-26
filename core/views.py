@@ -48,12 +48,11 @@ def cadastrar_local(request):
 
     data = json.loads(request.body)
     nome           = data.get('nome_local')
-    funcionarios   = data.get('funcionarios')
     endereco       = data.get('endereco')
     coordenador    = data.get('coordenador')
     telefone       = data.get('telefone')  # Opcional
 
-    if not (nome and funcionarios and endereco and coordenador):
+    if not (nome and endereco and coordenador):
         return JsonResponse({'error': 'Todos os campos são obrigatórios'}, status=400)
 
     from .models import LocalEntrega
@@ -63,7 +62,6 @@ def cadastrar_local(request):
     try:
         local = LocalEntrega.objects.create(
             nome_local=nome,
-            funcionarios=funcionarios,
             endereco=endereco,
             coordenador=coordenador,
             telefone=telefone if telefone else ''

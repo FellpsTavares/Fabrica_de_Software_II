@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import jsPDF from 'jspdf';
+import './Style/ReciboSaidaDoacao.css';
 
 function ReciboSaidaDoacao({
   usuario,

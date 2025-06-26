@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Style/CadastroFamilia.css';
+import './Style/EditarFamilia.css';
 import fundo from './Assets/Fundo.png';
 import homeLogo from './Assets/home.jpg';
 import plano3 from './Assets/plano3.png';

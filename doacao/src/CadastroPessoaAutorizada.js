@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Style/CadastroUser.css';
+import './Style/CadastroPessoaAutorizada.css';
 import plano3 from './Assets/plano3.png';
 import homeLogo from './Assets/home.jpg';
 import MenuLateral from './Components/MenuLateral';
