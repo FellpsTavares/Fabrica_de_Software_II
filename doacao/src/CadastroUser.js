@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';           // <-- importe o axios
 import './Style/CadastroUser.css';
+import './Style/CheckboxModern.css';
 import fundo from "./Assets/Fundo.png";
 import MenuLateral from './Components/MenuLateral';
 import homeLogo from './Assets/home.jpg';
@@ -18,6 +19,7 @@ function CadastroUser() {
     email: '',
     senha: '',
     confirmarSenha: '',
+    tipo_usuario: '',
     nome_local: ''
   });
   const [locais, setLocais] = useState([]);
@@ -45,8 +47,13 @@ function CadastroUser() {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handler para checkboxes de tipo de usuário (apenas um pode ser selecionado)
+  const handleTipoUsuarioChange = (tipo) => {
+    setForm(prev => ({ ...prev, tipo_usuario: tipo }));
   };
 
   const handleSubmit = async (e) => {
@@ -59,12 +66,17 @@ function CadastroUser() {
     }
 
     try {
+      if (!form.tipo_usuario) {
+        alert('Selecione o cargo do usuário!');
+        return;
+      }
       // prepara o payload conforme o seu view espera
       const payload = {
         nome_usuario: form.nome,
         username: form.nome, // ou outro campo para login
         senha: form.senha,
         email: form.email,
+        tipo_usuario: form.tipo_usuario,
         nome_local: form.nome_local
       };
 
@@ -72,7 +84,6 @@ function CadastroUser() {
       const res = await axios.post(
         'http://127.0.0.1:8000/cadastrar_usuario/',
         payload,
-        
       );
 
       // em caso de sucesso…
@@ -158,6 +169,29 @@ function CadastroUser() {
                   required
                 />
                 <span className="cadastro-focus-input" data-placeholder="Confirmar Senha"></span>
+              </div>
+
+              {/* Seleção de tipo de usuário (cargo) */}
+              <div className="cadastro-input-wrap" style={{ gridColumn: '1 / -1', margin: '10px 0 10px 0', display: 'flex', justifyContent: 'center', gap: 24 }}>
+                {tipoUsuario === 'MASTER' && (
+                  <>
+                    <label className="checkbox-modern">
+                      <input type="checkbox" checked={form.tipo_usuario === 'MASTER'} onChange={() => handleTipoUsuarioChange('MASTER')} />
+                      <span className="checkmark"></span>
+                      MASTER
+                    </label>
+                  </>
+                )}
+                <label className="checkbox-modern">
+                  <input type="checkbox" checked={form.tipo_usuario === 'COORDENADOR'} onChange={() => handleTipoUsuarioChange('COORDENADOR')} disabled={tipoUsuario !== 'MASTER' && tipoUsuario !== 'COORDENADOR'} />
+                  <span className="checkmark"></span>
+                  COORDENADOR
+                </label>
+                <label className="checkbox-modern">
+                  <input type="checkbox" checked={form.tipo_usuario === 'OPERACAO'} onChange={() => handleTipoUsuarioChange('OPERACAO')} />
+                  <span className="checkmark"></span>
+                  OPERACAO
+                </label>
               </div>
               <div className="cadastro-input-wrap" style={{gridColumn: '1 / -1'}}>
                 {tipoUsuario === 'MASTER' ? (

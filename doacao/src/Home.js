@@ -8,6 +8,9 @@ import plano3 from "./Assets/plano3.png";
 import Rodape from './Components/Rodape';
 
 function Home() {
+  const goToAlterarUsuario = () => {
+    navigate('/alterarUsuario');
+  };
   const navigate = useNavigate();
   const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
   const [menuOpen, setMenuOpen] = useState(false);
@@ -88,12 +91,20 @@ function Home() {
         <p className="subtitle">Facilitando o controle e garantindo a segurança de seus dados</p>
 
         <div className="options-grid">
+
           {['MASTER', 'COORDENADOR'].includes(tipoUsuario) && (
-            <div className="option-card" onClick={goToCadastro}>
-              {icons.usuario}
-              <h3>Cadastrar Usuários</h3>
-              <p>Cadastrar novos usuários</p>
-            </div>
+            <>
+              <div className="option-card" onClick={goToCadastro}>
+                {icons.usuario}
+                <h3>Cadastrar Usuários</h3>
+                <p>Cadastrar novos usuários</p>
+              </div>
+              <div className="option-card" onClick={goToAlterarUsuario}>
+                {icons.usuario}
+                <h3>Alterar Usuário</h3>
+                <p>Alterar dados e permissões de usuários</p>
+              </div>
+            </>
           )}
 
           <div className="option-card" onClick={goToFamilia}>

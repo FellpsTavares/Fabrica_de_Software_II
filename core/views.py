@@ -1,3 +1,54 @@
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Usuario, LocalEntrega, Familia, MembroFamiliar
+from django.db.models import Sum
+import json
+
+@csrf_exempt
+def listar_usuarios(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    tipo = request.GET.get('tipo')
+    local = request.GET.get('local')
+    qs = Usuario.objects.all()
+    if tipo:
+        qs = qs.filter(tipo_usuario=tipo)
+    if local:
+        qs = qs.filter(local__nome_local__iexact=local)
+    usuarios = list(qs.values('id', 'nome_usuario', 'email', 'tipo_usuario', 'local_id'))
+    # Adiciona nome do local
+    for u in usuarios:
+        try:
+            u['local_nome'] = LocalEntrega.objects.get(id=u['local_id']).nome_local if u['local_id'] else None
+        except LocalEntrega.DoesNotExist:
+            u['local_nome'] = None
+    return JsonResponse(usuarios, safe=False)
+
+@csrf_exempt
+def alterar_usuario(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        usuario_id = data.get('id')
+        nome = data.get('nome_usuario')
+        email = data.get('email')
+        tipo_usuario = data.get('tipo_usuario')
+        if not usuario_id:
+            return JsonResponse({'error': 'ID do usuário é obrigatório'}, status=400)
+        usuario = Usuario.objects.get(id=usuario_id)
+        if nome:
+            usuario.nome_usuario = nome
+        if email:
+            usuario.email = email
+        if tipo_usuario:
+            usuario.tipo_usuario = tipo_usuario
+        usuario.save()
+        return JsonResponse({'message': 'Usuário alterado com sucesso!'}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 # core/views.py
 
 from django.http import JsonResponse

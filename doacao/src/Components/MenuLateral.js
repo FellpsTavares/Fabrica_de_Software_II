@@ -13,6 +13,7 @@ const opcoes = [
   { label: 'Cadastrar Pessoa Autorizada', icon: icons.autorizada, path: '/pessoa-autorizada' },
   { label: 'Alterar Família', icon: icons.alterar, path: '/alterarFamilia' },
   { label: 'Estoque por Local', icon: icons.estoqueLocal, path: '/estoque-local' },
+  { label: 'Alterar Usuário', icon: icons.usuario, path: '/alterarUsuario' },
 ];
 
 export default function MenuLateral({ open, onClose }) {

@@ -17,6 +17,7 @@ import EstoqueLocal from './EstoqueLocal';
 import CadastroPessoaAutorizada from "./CadastroPessoaAutorizada";
 import AlterarFamilia from './AlterarFamilia';
 import EditarFamilia from './EditarFamilia';
+import AlterarUsuario from './AlterarUsuario';
 
 const AppRoutes = () => {
   // Mantém a lógica de autenticação como estava
@@ -65,6 +66,12 @@ const AppRoutes = () => {
         <Route path="/pessoa-autorizada" element={isAuthenticated ? <CadastroPessoaAutorizada /> : <Navigate to="/" replace />} />
         <Route path="/alterarFamilia" element={<AlterarFamilia />} />
         <Route path="/editar-familia/:id" element={<EditarFamilia />} />
+        <Route path="/alterar-usuario/:id" element={<AlterarUsuario />} />
+        <Route path="/alterarUsuario" element={
+          isAuthenticated && (tipoUsuario === 'MASTER' || tipoUsuario === 'COORDENADOR')
+            ? <AlterarUsuario />
+            : <Navigate to="/home" replace />
+        } />
         
       </Routes>
     </BrowserRouter>
