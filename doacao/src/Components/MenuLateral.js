@@ -17,13 +17,26 @@ const opcoes = [
 
 export default function MenuLateral({ open, onClose }) {
   const navigate = useNavigate();
+  // Recupera o tipo de usuário do localStorage
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+  // Filtra opções conforme permissão
+  const opcoesFiltradas = opcoes.filter(op => {
+    if (op.label === 'Cadastrar Usuários') {
+      return tipoUsuario === 'MASTER' || tipoUsuario === 'COORDENADOR';
+    }
+    if (op.label === 'Cadastrar Local') {
+      return tipoUsuario === 'MASTER';
+    }
+    return true;
+  });
   return (
     <div className={`menu-lateral-overlay${open ? ' open' : ''}`} onClick={onClose}>
       <nav className={`menu-lateral${open ? ' open' : ''}`} onClick={e => e.stopPropagation()}>
         <button className="menu-lateral-close" onClick={onClose} title="Fechar menu">×</button>
         <h3 className="menu-lateral-title">Menu</h3>
         <ul className="menu-lateral-list">
-          {opcoes.map(op => (
+          {opcoesFiltradas.map(op => (
             <li key={op.label} onClick={() => { navigate(op.path); onClose(); }} className="menu-lateral-item">
               <span className="menu-lateral-icon">{op.icon}</span>
               <span>{op.label}</span>

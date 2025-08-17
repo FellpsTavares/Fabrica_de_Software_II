@@ -8,8 +8,16 @@ import json
 
 @csrf_exempt
 def cadastrar_usuario(request):
+
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+    # Verificação de permissão de acesso
+    usuario_autenticado = getattr(request, 'user', None)
+    if not usuario_autenticado or not hasattr(usuario_autenticado, 'tipo_usuario'):
+        return JsonResponse({'error': 'Usuário não autenticado'}, status=401)
+    if usuario_autenticado.tipo_usuario not in ['MASTER', 'COORDENADOR']:
+        return JsonResponse({'error': 'Acesso negado: apenas usuarios MASTER ou COORDENADOR podem cadastrar usuários.'}, status=403)
 
     data = json.loads(request.body)
     nome    = data.get('nome_usuario')

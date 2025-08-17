@@ -13,7 +13,6 @@ import Rodape from './Components/Rodape';
 function CadastroUser() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -21,6 +20,19 @@ function CadastroUser() {
     confirmarSenha: '',
     nome_local: ''
   });
+
+  // Recupera o tipo de usuário do localStorage
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Protege a tela: só permite acesso para MASTER ou COORDENADOR
+  if (tipoUsuario !== 'MASTER' && tipoUsuario !== 'COORDENADOR') {
+    return null;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,10 +75,6 @@ function CadastroUser() {
       alert('Erro: ' + (err.response?.data?.error || err.message));
     }
   };
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
 
   return (
     <>

@@ -56,6 +56,8 @@ function Home() {
     navigate('/estoque-local');
   };
 
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+
   return (
     <div className="home-container" style={{ background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
       {/* Menu lateral */}
@@ -86,11 +88,13 @@ function Home() {
         <p className="subtitle">Facilitando o controle e garantindo a segurança de seus dados</p>
 
         <div className="options-grid">
-          <div className="option-card" onClick={goToCadastro}>
-            {icons.usuario}
-            <h3>Cadastrar Usuários</h3>
-            <p>Cadastrar novos usuários</p>
-          </div>
+          {['MASTER', 'COORDENADOR'].includes(tipoUsuario) && (
+            <div className="option-card" onClick={goToCadastro}>
+              {icons.usuario}
+              <h3>Cadastrar Usuários</h3>
+              <p>Cadastrar novos usuários</p>
+            </div>
+          )}
 
           <div className="option-card" onClick={goToFamilia}>
             {icons.familia}
@@ -98,11 +102,13 @@ function Home() {
             <p>Registrar informações das famílias</p>
           </div>
 
-          <div className="option-card" onClick={goToLocal}>
-            {icons.local}
-            <h3>Cadastrar Local</h3>
-            <p>Registrar Novos Locais de retirada</p>
-          </div>
+          {tipoUsuario === 'MASTER' && (
+            <div className="option-card" onClick={goToLocal}>
+              {icons.local}
+              <h3>Cadastrar Local</h3>
+              <p>Registrar Novos Locais de retirada</p>
+            </div>
+          )}
 
           <div className="option-card" onClick={goToDoacoes}>
             {icons.produto}

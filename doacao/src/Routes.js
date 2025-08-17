@@ -39,13 +39,20 @@ const AppRoutes = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // Recupera o tipo de usuário do localStorage
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+
   return (
     <BrowserRouter>
       <Routes>
-        
         <Route path="/" element={<Login setIsAuthenticated={handleLoginSuccess} />} />
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" replace />} />
-        <Route path="/cadastro" element={isAuthenticated ? <CadastroUser /> : <Navigate to="/" replace />} />
+        <Route path="/cadastro" element={
+          isAuthenticated && (tipoUsuario === 'MASTER' || tipoUsuario === 'COORDENADOR')
+            ? <CadastroUser />
+            : <Navigate to="/home" replace />
+        } />
         <Route path="/CadastroFamilia" element={isAuthenticated ? <CadastroFamilia /> : <Navigate to="/" replace />} />
         <Route path="/CadastroLocal" element={isAuthenticated ? <CadastroLocal /> : <Navigate to="/" replace />} />
         <Route path="/cadastroResponsavel" element={isAuthenticated ? <CadastroResponsavel /> : <Navigate to="/" replace />} />
