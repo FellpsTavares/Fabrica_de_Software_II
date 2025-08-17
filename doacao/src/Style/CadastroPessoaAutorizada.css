@@ -1,9 +1,3 @@
-/* Estilos exclusivos para CadastroPessoaAutorizada */
-
-.cadastro-pessoa-autorizada-container {
-  /* Adicione estilos específicos aqui */
-}
-
 .cadastro-container {
   display: flex;
   justify-content: center;
@@ -84,6 +78,89 @@
   top: -15px;
   font-size: 13px;
   color: #7fc98f;
+}
+
+.cadastro-input[type="date"]::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]::-moz-placeholder {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]:-ms-input-placeholder {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]::placeholder {
+  color: transparent;
+}
+
+/* Remove o texto padrão do input date no Chrome, Edge, Safari */
+.cadastro-input[type="date"]::-webkit-datetime-edit {
+  color: #333;
+}
+
+.cadastro-input[type="date"]:not(:focus):not(.has-val)::-webkit-datetime-edit {
+  color: transparent;
+}
+
+/* Remove o texto padrão do input date no Firefox */
+.cadastro-input[type="date"]:not(:focus):not(.has-val)::-moz-placeholder {
+  color: transparent;
+}
+
+/* Remove o texto padrão do input date no Edge/IE */
+.cadastro-input[type="date"]:not(:focus):not(.has-val):-ms-input-placeholder {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]:focus + .cadastro-focus-input::after,
+.cadastro-input[type="date"].has-val + .cadastro-focus-input::after {
+  top: -15px;
+  font-size: 13px;
+  color: #7fc98f;
+}
+
+/* Esconde o texto padrão do input date em todos os estados */
+.cadastro-input[type="date"]::-webkit-input-placeholder,
+.cadastro-input[type="date"]::-webkit-datetime-edit,
+.cadastro-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.cadastro-input[type="date"]::-webkit-datetime-edit-text,
+.cadastro-input[type="date"]::-webkit-datetime-edit-month-field,
+.cadastro-input[type="date"]::-webkit-datetime-edit-day-field,
+.cadastro-input[type="date"]::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]:not(.has-val):not(:focus)::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]:not(.has-val):not(:focus) {
+  color: transparent;
+}
+
+.cadastro-input[type="date"]:focus::-webkit-datetime-edit,
+.cadastro-input[type="date"].has-val::-webkit-datetime-edit {
+  color: #333;
+}
+
+/* Firefox */
+.cadastro-input[type="date"]:not(.has-val):not(:focus)::-moz-placeholder {
+  color: transparent;
+}
+.cadastro-input[type="date"]:not(.has-val):not(:focus) {
+  color: transparent;
+}
+.cadastro-input[type="date"]:focus,
+.cadastro-input[type="date"].has-val {
+  color: #333;
+}
+
+/* Edge/IE */
+.cadastro-input[type="date"]:not(.has-val):not(:focus):-ms-input-placeholder {
+  color: transparent;
 }
 
 .cadastro-btn-container {

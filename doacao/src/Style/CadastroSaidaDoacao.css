@@ -25,3 +25,19 @@
   cursor: not-allowed;
   color: #999;
 }
+
+.btn-lupa {
+  width: 28px !important;
+  min-width: 0 !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7fc98f;
+  border: none;
+  border-radius: 8px;
+  margin-left: 2px;
+  box-sizing: border-box;
+}
