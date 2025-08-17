@@ -35,7 +35,9 @@ function Login({ setIsAuthenticated }) {
         localStorage.setItem('usuarioLogado', JSON.stringify({
           id: data.id,
           nome: data.nome,
-          tipo: data.tipo
+          tipo: data.tipo,
+          local_id: data.local_id,
+          local_nome: data.local_nome
         }));
         setIsAuthenticated(true);
         navigate('/home');

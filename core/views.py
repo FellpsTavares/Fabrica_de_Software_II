@@ -12,12 +12,7 @@ def cadastrar_usuario(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-    # Verificação de permissão de acesso
-    usuario_autenticado = getattr(request, 'user', None)
-    if not usuario_autenticado or not hasattr(usuario_autenticado, 'tipo_usuario'):
-        return JsonResponse({'error': 'Usuário não autenticado'}, status=401)
-    if usuario_autenticado.tipo_usuario not in ['MASTER', 'COORDENADOR']:
-        return JsonResponse({'error': 'Acesso negado: apenas usuarios MASTER ou COORDENADOR podem cadastrar usuários.'}, status=403)
+    # Validação de permissão removida conforme solicitado
 
     data = json.loads(request.body)
     nome    = data.get('nome_usuario')
@@ -192,7 +187,20 @@ def login_usuario(request):
         from django.contrib.auth import authenticate
         user = authenticate(username=username, password=password)
         if user is not None:
-            return JsonResponse({'message': 'Login realizado com sucesso!', 'id': user.id, 'nome': user.nome_usuario, 'tipo': user.tipo_usuario}, status=200)
+            # Buscar informações do local de trabalho
+            local_id = None
+            local_nome = None
+            if hasattr(user, 'local') and user.local:
+                local_id = getattr(user.local, 'id', None)
+                local_nome = getattr(user.local, 'nome_local', None)
+            return JsonResponse({
+                'message': 'Login realizado com sucesso!',
+                'id': user.id,
+                'nome': user.nome_usuario,
+                'tipo': user.tipo_usuario,
+                'local_id': local_id,
+                'local_nome': local_nome
+            }, status=200)
         else:
             return JsonResponse({'error': 'Usuário ou senha inválidos'}, status=401)
     except Exception as e:

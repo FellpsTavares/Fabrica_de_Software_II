@@ -20,13 +20,23 @@ function CadastroUser() {
     confirmarSenha: '',
     nome_local: ''
   });
+  const [locais, setLocais] = useState([]);
 
   // Recupera o tipo de usuário do localStorage
   const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
   const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+  const localCoordenador = usuarioLogado?.local_nome || usuarioLogado?.local || '';
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tipoUsuario === 'MASTER') {
+      axios.get('http://127.0.0.1:8000/listar_locais/')
+        .then(res => setLocais(res.data))
+        .catch(() => setLocais([]));
+    }
+    if (tipoUsuario === 'COORDENADOR') {
+      setForm(prev => ({ ...prev, nome_local: localCoordenador }));
+    }
   }, []);
 
   // Protege a tela: só permite acesso para MASTER ou COORDENADOR
@@ -62,7 +72,7 @@ function CadastroUser() {
       const res = await axios.post(
         'http://127.0.0.1:8000/cadastrar_usuario/',
         payload,
-        { headers: { 'Content-Type': 'application/json' } }
+        
       );
 
       // em caso de sucesso…
@@ -150,15 +160,32 @@ function CadastroUser() {
                 <span className="cadastro-focus-input" data-placeholder="Confirmar Senha"></span>
               </div>
               <div className="cadastro-input-wrap" style={{gridColumn: '1 / -1'}}>
-                <input
-                  type="text"
-                  name="nome_local"
-                  value={form.nome_local}
-                  onChange={handleChange}
-                  className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
-                  required
-                />
-                <span className="cadastro-focus-input" data-placeholder="Local de Trabalho (nome do local)"></span>
+                {tipoUsuario === 'MASTER' ? (
+                  <select
+                    name="nome_local"
+                    value={form.nome_local}
+                    onChange={handleChange}
+                    className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
+                    required
+                  >
+                    <option value=""></option>
+                    {locais.map(local => (
+                      <option key={local.id_local_entrega || local.id} value={local.nome_local}>
+                        {local.nome_local}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name="nome_local"
+                    value={form.nome_local}
+                    disabled
+                    className={`cadastro-input ${form.nome_local ? 'has-val' : ''}`}
+                    required
+                  />
+                )}
+                <span className="cadastro-focus-input" data-placeholder="Local de Trabalho"></span>
               </div>
             </div>
             <div className="cadastro-btn-container">
