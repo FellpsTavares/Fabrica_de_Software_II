@@ -1,10 +1,14 @@
 from django.urls import include, path
 from . import views
-from .views import cadastrar_usuario, cadastrar_local, cadastrar_familia, cadastrar_produto, cadastrar_membro_familiar, login_usuario, listar_usuarios
+from .views import cadastrar_usuario, cadastrar_local, cadastrar_familia, cadastrar_produto, cadastrar_membro_familiar, login_usuario, listar_usuarios, desativar_usuario, ativar_usuario
+from .views import atualizar_usuario
 
 urlpatterns = [
     path('listar_usuarios/', listar_usuarios, name='listar_usuarios'),
     path('cadastrar_usuario/', cadastrar_usuario, name='cadastrar_usuario'),
+    path('desativar_usuario/', desativar_usuario, name='desativar_usuario'),
+    path('ativar_usuario/', ativar_usuario, name='ativar_usuario'),
+        path('atualizar_usuario/', atualizar_usuario, name='atualizar_usuario'),
     path('cadastrar_local/', cadastrar_local, name='cadastrar_local'),
     path('cadastrar_familia/', cadastrar_familia, name='cadastrar_familia'),
     path('cadastrar_produto/', cadastrar_produto, name='cadastrar_produto'),

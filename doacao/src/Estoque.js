@@ -13,47 +13,61 @@ function Estoque() {
   const [entradas, setEntradas] = useState([]);
   const [saidas, setSaidas] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [locais, setLocais] = useState([]);
+  const [loadingLocais, setLoadingLocais] = useState(false);
   const navigate = useNavigate();
 
+  // Recupera usuário logado
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+
   useEffect(() => {
-    async function fetchMovimentacoes() {
-      try {
-        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
-        if (!usuarioLogado || !usuarioLogado.id) {
+    if (tipoUsuario === 'MASTER') {
+      setLoadingLocais(true);
+      axios.get('http://127.0.0.1:8000/listar_locais/')
+        .then(res => setLocais(res.data))
+        .catch(() => setLocais([]))
+        .finally(() => setLoadingLocais(false));
+    } else {
+      async function fetchMovimentacoes() {
+        try {
+          if (!usuarioLogado || !usuarioLogado.id) {
+            setEntradas([]);
+            setSaidas([]);
+            return;
+          }
+          // Busca o local do usuário
+          const resUser = await axios.get(`http://127.0.0.1:8000/usuario_detalhe/${usuarioLogado.id}/`);
+          const localNome = resUser.data.local_nome;
+          if (!localNome) {
+            setEntradas([]);
+            setSaidas([]);
+            return;
+          }
+          // Busca o estoque do local
+          const resEst = await axios.get('http://127.0.0.1:8000/listar_estoques/');
+          const estoques = resEst.data;
+          const estoqueUsuario = estoques.find(e => (e.nome || '').trim().toLowerCase() === (localNome || '').trim().toLowerCase());
+          if (!estoqueUsuario) {
+            setEntradas([]);
+            setSaidas([]);
+            return;
+          }
+          // Busca movimentações e filtra pelo estoque
+          const resMov = await axios.get('http://127.0.0.1:8000/listar_movimentacoes_estoque/');
+          const movimentacoes = resMov.data;
+          const entradas = movimentacoes.entradas.filter(mov => mov.estoque_destino_id === estoqueUsuario.id_estoque);
+          const saidas = movimentacoes.saidas.filter(mov => mov.estoque_origem_id === estoqueUsuario.id_estoque);
+          setEntradas(entradas);
+          setSaidas(saidas);
+        } catch {
           setEntradas([]);
           setSaidas([]);
-          return;
         }
-        // Busca o local do usuário
-        const resUser = await axios.get(`http://127.0.0.1:8000/usuario_detalhe/${usuarioLogado.id}/`);
-        const localNome = resUser.data.local_nome;
-        if (!localNome) {
-          setEntradas([]);
-          setSaidas([]);
-          return;
-        }
-        // Busca o estoque do local
-        const resEst = await axios.get('http://127.0.0.1:8000/listar_estoques/');
-        const estoques = resEst.data;
-        const estoqueUsuario = estoques.find(e => (e.nome || '').trim().toLowerCase() === (localNome || '').trim().toLowerCase());
-        if (!estoqueUsuario) {
-          setEntradas([]);
-          setSaidas([]);
-          return;
-        }
-        // Busca movimentações e filtra pelo estoque
-        const resMov = await axios.get('http://127.0.0.1:8000/listar_movimentacoes_estoque/');
-        const movimentacoes = resMov.data;
-        const entradas = movimentacoes.entradas.filter(mov => mov.estoque_destino_id === estoqueUsuario.id_estoque);
-        const saidas = movimentacoes.saidas.filter(mov => mov.estoque_origem_id === estoqueUsuario.id_estoque);
-        setEntradas(entradas);
-        setSaidas(saidas);
-      } catch {
-        setEntradas([]);
-        setSaidas([]);
       }
+      fetchMovimentacoes();
     }
-    fetchMovimentacoes();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -168,8 +182,67 @@ function Estoque() {
     </tr>
   );
 
+  // MASTER: lista de locais com botão para consultar movimentações
+  if (tipoUsuario === 'MASTER') {
+    return (
+      <div>
+        <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
+        <header className="header" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', zIndex: 10 }}>
+          <div className="header-left">
+            <img src={homeLogo} alt="Logo SIGEAS" className="home-logo" onClick={() => navigate('/home')} style={{cursor: 'pointer'}} />
+            <button className="menu-hamburger" onClick={() => setMenuOpen(true)} title="Abrir menu">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2e8b57" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"/>
+                <line x1="4" y1="12" x2="20" y2="12"/>
+                <line x1="4" y1="18" x2="20" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          <h2>Assistência Social Digital</h2>
+          <div className="header-user-area">
+            <span className="user-info">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
+              {usuarioLogado?.nome || 'Usuário'}
+            </span>
+            <button onClick={() => navigate(-1)} className="header-logout-btn estoque-btn voltar" title="Voltar">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
+            </button>
+          </div>
+        </header>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90, background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
+          <div className="cadastro-box" style={{ maxWidth: 700, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
+            <h2 style={{ color: '#2e8b57', marginBottom: 20, textAlign: 'center' }}>Movimentação de Estoque por Local</h2>
+            <div style={{ margin: '32px 0 24px 0' }}>
+              <h3 style={{ textAlign: 'center', color: '#388e3c', marginBottom: 18 }}>Selecione um local para visualizar as movimentações:</h3>
+              {loadingLocais ? (
+                <div style={{ textAlign: 'center', color: '#2e8b57', fontWeight: 'bold', margin: 24, fontSize: 18 }}>Carregando locais...</div>
+              ) : (
+                <div style={{ maxWidth: 500, margin: '0 auto' }}>
+                  {locais.length === 0 && <div style={{ textAlign: 'center', color: '#aaa' }}>Nenhum local encontrado.</div>}
+                  {locais.map(local => (
+                    <div key={local.id_local_entrega || local.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e0e0e0', borderRadius: 8, padding: '12px 18px', marginBottom: 14, background: '#f8fff8' }}>
+                      <span style={{ fontWeight: 600, fontSize: 17 }}>{local.nome_local}</span>
+                      <button onClick={() => navigate('/estoque-movimentacao-local', { state: { local } })} style={{ background: '#2e8b57', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px #0001', padding: 0 }} title="Ver movimentações deste local">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="7" width="18" height="13" rx="2"/>
+                          <path d="M16 3v4M8 3v4"/>
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <Rodape />
+      </div>
+    );
+  }
+
+  // Demais usuários: comportamento atual
   return (
-    <div>
+    <div style={{ minHeight: '100vh', background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
       <MenuLateral open={menuOpen} onClose={() => setMenuOpen(false)} />
       <header className="header" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', zIndex: 10 }}>
         <div className="header-left">
@@ -186,14 +259,14 @@ function Estoque() {
         <div className="header-user-area">
           <span className="user-info">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
-            {JSON.parse(localStorage.getItem('usuarioLogado'))?.nome || 'Usuário'}
+            {usuarioLogado?.nome || 'Usuário'}
           </span>
           <button onClick={() => navigate(-1)} className="header-logout-btn estoque-btn voltar" title="Voltar">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
           </button>
         </div>
       </header>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90, background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90 }}>
         <div className="cadastro-box" style={{ maxWidth: 1100, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
           <h2 style={{ color: '#2e8b57', marginBottom: 20 }}>Movimentação de Estoque do Seu Local</h2>
           <div style={{ marginBottom: 40 }}>
@@ -246,6 +319,12 @@ function Estoque() {
             </div>
           </div>
         </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0 0 0' }}>
+        <button onClick={() => navigate(-1)} className="estoque-local-btn voltar" title="Voltar para tela anterior" style={{ minWidth: 120, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#e57373', color: '#fff', fontWeight: 600, borderRadius: 8, border: 'none', fontSize: 16, cursor: 'pointer' }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
+          Voltar
+        </button>
       </div>
       <Rodape />
     </div>

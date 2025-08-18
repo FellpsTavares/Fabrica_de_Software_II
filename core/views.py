@@ -1,3 +1,34 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+# Atualizar usuário (nome, email, tipo_usuario, senha)
+@csrf_exempt
+def atualizar_usuario(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        user_id = data.get('id')
+        nome_usuario = data.get('nome_usuario')
+        email = data.get('email')
+        tipo_usuario = data.get('tipo_usuario')
+        senha = data.get('senha')
+        from .models import Usuario
+        usuario = Usuario.objects.get(id=user_id)
+        if nome_usuario:
+            usuario.nome_usuario = nome_usuario
+        if email:
+            usuario.email = email
+        if tipo_usuario:
+            usuario.tipo_usuario = tipo_usuario
+        if senha:
+            usuario.set_password(senha)
+        usuario.save()
+        return JsonResponse({'success': True})
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Usuario, LocalEntrega, Familia, MembroFamiliar
@@ -15,7 +46,7 @@ def listar_usuarios(request):
         qs = qs.filter(tipo_usuario=tipo)
     if local:
         qs = qs.filter(local__nome_local__iexact=local)
-    usuarios = list(qs.values('id', 'nome_usuario', 'email', 'tipo_usuario', 'local_id'))
+    usuarios = list(qs.values('id', 'nome_usuario', 'email', 'tipo_usuario', 'local_id', 'is_active'))
     # Adiciona nome do local
     for u in usuarios:
         try:
@@ -23,6 +54,42 @@ def listar_usuarios(request):
         except LocalEntrega.DoesNotExist:
             u['local_nome'] = None
     return JsonResponse(usuarios, safe=False)
+
+@csrf_exempt
+def desativar_usuario(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        usuario_id = data.get('id')
+        if not usuario_id:
+            return JsonResponse({'error': 'ID do usuário é obrigatório'}, status=400)
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = False
+        usuario.save()
+        return JsonResponse({'message': 'Usuário desativado com sucesso!'}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@csrf_exempt
+def ativar_usuario(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    try:
+        data = json.loads(request.body)
+        usuario_id = data.get('id')
+        if not usuario_id:
+            return JsonResponse({'error': 'ID do usuário é obrigatório'}, status=400)
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = True
+        usuario.save()
+        return JsonResponse({'message': 'Usuário ativado com sucesso!'}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({'error': 'Usuário não encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 @csrf_exempt
 def alterar_usuario(request):

@@ -1,3 +1,4 @@
+import EstoqueMovimentacaoLocal from './EstoqueMovimentacaoLocal';
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate  } from "react-router-dom";
 
@@ -14,6 +15,7 @@ import CadastroSaidaDoacao from "./CadastroSaidaDoacao";
 import UnidadesMedida from './UnidadesMedida';
 import Estoque from './Estoque';
 import EstoqueLocal from './EstoqueLocal';
+import EstoqueLocalEstoque from './EstoqueLocalEstoque';
 import CadastroPessoaAutorizada from "./CadastroPessoaAutorizada";
 import AlterarFamilia from './AlterarFamilia';
 import EditarFamilia from './EditarFamilia';
@@ -61,8 +63,10 @@ const AppRoutes = () => {
         <Route path="/cadastroMembroFamiliar" element={isAuthenticated ? <CadastroMembroFamiliar /> : <Navigate to="/" replace />} />
         <Route path="/saidaDoacao" element={isAuthenticated ? <CadastroSaidaDoacao /> : <Navigate to="/" replace />} />
         <Route path="/unidades-medida" element={<UnidadesMedida />} />
-        <Route path="/estoque" element={isAuthenticated ? <Estoque /> : <Navigate to="/" replace />} />
-        <Route path="/estoque-local" element={isAuthenticated ? <EstoqueLocal /> : <Navigate to="/" replace />} />
+  <Route path="/estoque" element={isAuthenticated ? <Estoque /> : <Navigate to="/" replace />} />
+  <Route path="/estoque-movimentacao-local" element={isAuthenticated ? <EstoqueMovimentacaoLocal /> : <Navigate to="/" replace />} />
+  <Route path="/estoque-local" element={isAuthenticated ? <EstoqueLocal /> : <Navigate to="/" replace />} />
+  <Route path="/estoque-local-estoque" element={isAuthenticated ? <EstoqueLocalEstoque /> : <Navigate to="/" replace />} />
         <Route path="/pessoa-autorizada" element={isAuthenticated ? <CadastroPessoaAutorizada /> : <Navigate to="/" replace />} />
         <Route path="/alterarFamilia" element={<AlterarFamilia />} />
         <Route path="/editar-familia/:id" element={<EditarFamilia />} />

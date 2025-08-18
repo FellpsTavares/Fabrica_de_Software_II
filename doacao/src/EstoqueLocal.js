@@ -9,35 +9,54 @@ import Rodape from './Components/Rodape';
 import './Style/EstoqueLocal.css';
 
 function EstoqueLocal() {
-  const [estoques, setEstoques] = useState([]);
+  const [locais, setLocais] = useState([]);
   const [estoque, setEstoque] = useState([]);
-  const [estoqueSelecionado, setEstoqueSelecionado] = useState('');
+  const [localSelecionado, setLocalSelecionado] = useState(null);
   const [loading, setLoading] = useState(false);
   const [buscou, setBuscou] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get('http://127.0.0.1:8000/listar_estoques/')
-      .then(res => setEstoques(res.data))
-      .catch(() => setEstoques([]));
-  }, []);
+  // Recupera usuário logado
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+  const tipoUsuario = (usuarioLogado?.tipo || '').trim().toUpperCase();
+  const localUsuario = usuarioLogado?.local_nome || usuarioLogado?.local || '';
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tipoUsuario === 'MASTER') {
+      axios.get('http://127.0.0.1:8000/listar_locais/')
+        .then(res => setLocais(res.data))
+        .catch(() => setLocais([]));
+    } else {
+      // Para COORDENADOR/OPERACAO, busca estoque do local vinculado
+      buscarEstoqueUsuario();
+    }
+    // eslint-disable-next-line
   }, []);
 
-  const buscarEstoque = async () => {
-    if (!estoqueSelecionado) return;
+  const buscarEstoqueUsuario = async () => {
     setLoading(true);
     setBuscou(true);
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/estoque_local/?estoque_id=${estoqueSelecionado}`);
-      setEstoque(res.data);
+      // Buscar id do estoque pelo nome do local
+      const estoquesRes = await axios.get('http://127.0.0.1:8000/listar_estoques/');
+      const estoqueLocal = estoquesRes.data.find(e => (e.nome || '').toLowerCase() === (localUsuario || '').toLowerCase());
+      if (estoqueLocal) {
+        setLocalSelecionado(estoqueLocal);
+        const res = await axios.get(`http://127.0.0.1:8000/estoque_local/?estoque_id=${estoqueLocal.id_estoque}`);
+        setEstoque(res.data);
+      } else {
+        setEstoque([]);
+      }
     } catch {
       setEstoque([]);
     }
     setLoading(false);
+  };
+
+  const buscarEstoqueLocal = (local) => {
+    navigate('/estoque-local-estoque', { state: { local } });
   };
 
   return (
@@ -60,63 +79,75 @@ function EstoqueLocal() {
             <div className="header-user-area">
               <span className="user-info">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle', marginRight: 6}}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 8-4 8-4s8 0 8 4"/></svg>
-                {JSON.parse(localStorage.getItem('usuarioLogado'))?.nome || 'Usuário'}
+                {usuarioLogado?.nome || 'Usuário'}
               </span>
               <button onClick={() => navigate(-1)} className="header-logout-btn" title="Voltar">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
               </button>
             </div>
           </header>
-          <div className="estoque-local-filtros">
-            <label htmlFor="estoque-select" className="estoque-local-label">
-              {icons.estoqueLocal} Selecione o Estoque:
-            </label>
-            <select id="estoque-select" value={estoqueSelecionado} onChange={e => setEstoqueSelecionado(e.target.value)} className="estoque-local-select">
-              <option value="">Escolha um local</option>
-              {estoques.map(est => (
-                <option key={est.id_estoque} value={est.id_estoque}>{est.nome}</option>
-              ))}
-            </select>
-            <button onClick={buscarEstoque} className="estoque-local-btn buscar" title="Buscar produtos do estoque" style={{ minWidth: 120, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#388e3c', color: '#fff', fontWeight: 600, borderRadius: 8, border: 'none', fontSize: 16, cursor: 'pointer' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: 4 }}>
-                <circle cx="11" cy="11" r="7"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              Buscar
-            </button>
+
+          {/* MASTER: lista de locais com botão temático */}
+          {tipoUsuario === 'MASTER' && (
+            <div style={{ margin: '32px 0 24px 0' }}>
+              <h3 style={{ textAlign: 'center', color: '#388e3c', marginBottom: 18 }}>Selecione um local para visualizar o estoque:</h3>
+              <div style={{ maxWidth: 500, margin: '0 auto' }}>
+                {locais.length === 0 && <div style={{ textAlign: 'center', color: '#aaa' }}>Nenhum local encontrado.</div>}
+                {locais.map(local => (
+                  <div key={local.id_local_entrega || local.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e0e0e0', borderRadius: 8, padding: '12px 18px', marginBottom: 14, background: '#f8fff8' }}>
+                    <span style={{ fontWeight: 600, fontSize: 17 }}>{local.nome_local}</span>
+                    <button onClick={() => buscarEstoqueLocal(local)} style={{ background: '#2e8b57', border: 'none', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 8px #0001', padding: 0 }} title="Ver estoque deste local">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="7" width="18" height="13" rx="2"/>
+                        <path d="M16 3v4M8 3v4"/>
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tabela de estoque (aparece após seleção ou direto para COORDENADOR/OPERACAO) */}
+          {(tipoUsuario !== 'MASTER' || (tipoUsuario === 'MASTER' && localSelecionado)) && (
+            <div className="estoque-local-tabela-area">
+              <h3 style={{ textAlign: 'center', color: '#388e3c', marginBottom: 10 }}>
+                Estoque do local: <span style={{ color: '#222' }}>{localSelecionado?.nome_local || localUsuario}</span>
+              </h3>
+              {loading ? (
+                <div style={{ textAlign: 'center', color: '#2e8b57', fontWeight: 'bold', margin: 24, fontSize: 18 }}>Carregando estoque...</div>
+              ) : (
+                <table className="estoque-local-tabela">
+                  <thead>
+                    <tr>
+                      <th>Produto</th>
+                      <th>Quantidade</th>
+                      <th>Unidade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {buscou && estoque.length === 0 ? (
+                      <tr><td colSpan={3} style={{ textAlign: 'center', color: '#aaa', padding: 28, fontSize: 17 }}>Nenhum produto encontrado para este estoque</td></tr>
+                    ) : (
+                      estoque.map(item => (
+                        <tr key={item.id_produto} style={item.quantidade === 0 ? { background: '#ffeaea' } : {}}>
+                          <td>{item.nome}</td>
+                          <td style={{ color: item.quantidade === 0 ? '#c00' : '#222', fontWeight: item.quantidade === 0 ? 'bold' : 'normal', fontSize: 16 }}>{item.quantidade}</td>
+                          <td>{item.unidade_nome}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0 0 0' }}>
             <button onClick={() => navigate(-1)} className="estoque-local-btn voltar" title="Voltar para tela anterior" style={{ minWidth: 120, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#e57373', color: '#fff', fontWeight: 600, borderRadius: 8, border: 'none', fontSize: 16, cursor: 'pointer' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="21" y2="12"/></svg>
               Voltar
             </button>
           </div>
-          {loading ? (
-            <div style={{ textAlign: 'center', color: '#2e8b57', fontWeight: 'bold', margin: 24, fontSize: 18 }}>Carregando estoque...</div>
-          ) : (
-            <div className="estoque-local-tabela-area">
-              <table className="estoque-local-tabela">
-                <thead>
-                  <tr>
-                    <th>Produto</th>
-                    <th>Quantidade</th>
-                    <th>Unidade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {buscou && estoque.length === 0 ? (
-                    <tr><td colSpan={3} style={{ textAlign: 'center', color: '#aaa', padding: 28, fontSize: 17 }}>Nenhum produto encontrado para este estoque</td></tr>
-                  ) : (
-                    estoque.map(item => (
-                      <tr key={item.id_produto} style={item.quantidade === 0 ? { background: '#ffeaea' } : {}}>
-                        <td>{item.nome}</td>
-                        <td style={{ color: item.quantidade === 0 ? '#c00' : '#222', fontWeight: item.quantidade === 0 ? 'bold' : 'normal', fontSize: 16 }}>{item.quantidade}</td>
-                        <td>{item.unidade_nome}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
           <Rodape />
         </div>
       </div>
