@@ -53,10 +53,6 @@ function AlterarUsuario() {
       setErro('Coordenador não pode promover para MASTER.');
       return;
     }
-    if (tipoUsuario === 'COORDENADOR' && usuario.tipo_usuario === 'COORDENADOR' && usuario.id !== usuarioLogado.id) {
-      setErro('Coordenador só pode alterar seu próprio usuário COORDENADOR.');
-      return;
-    }
     try {
       // Ajuste para enviar apenas campos editáveis
       const payload = {
