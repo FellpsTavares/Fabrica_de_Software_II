@@ -16,6 +16,7 @@ function CadastroUser() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [form, setForm] = useState({
     nome: '',
+    username: '',
     email: '',
     senha: '',
     confirmarSenha: '',
@@ -73,7 +74,7 @@ function CadastroUser() {
       // prepara o payload conforme o seu view espera
       const payload = {
         nome_usuario: form.nome,
-        username: form.nome, // ou outro campo para login
+        username: form.username,
         senha: form.senha,
         email: form.email,
         tipo_usuario: form.tipo_usuario,
@@ -147,6 +148,18 @@ function CadastroUser() {
                   required
                 />
                 <span className="cadastro-focus-input" data-placeholder="Email"></span>
+              </div>
+              <div className="cadastro-input-wrap" style={{gridColumn: '1 / -1'}}>
+                <input
+                  type="text"
+                  name="username"
+                  value={form.username}
+                  onChange={handleChange}
+                  className={`cadastro-input ${form.username ? 'has-val' : ''}`}
+                  required
+                  autoComplete="username"
+                />
+                <span className="cadastro-focus-input" data-placeholder="Nome de usuário"></span>
               </div>
               <div className="cadastro-input-wrap">
                 <input

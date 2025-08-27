@@ -1,3 +1,11 @@
+.cadastro-saida-doacao-container {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .cadastro-saida-doacao-container {
+    margin-top: 54px;
+  }
+}
 /* Ajuste visual para selects na tela de Saída de Doação para remover seta duplicada e aplicar seta customizada */
 .cadastro-input-wrap select.cadastro-input {
   appearance: none;

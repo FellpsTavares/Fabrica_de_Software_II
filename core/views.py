@@ -1,3 +1,13 @@
+# Endpoint para listar todas as famílias cadastradas
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def listar_familias(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    familias = Familia.objects.all().values('id', 'nome_familia')
+    result = [{'id_familia': f['id'], 'nome_familia': f['nome_familia']} for f in familias]
+    return JsonResponse(result, safe=False)
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json

@@ -4,6 +4,7 @@ from .views import cadastrar_usuario, cadastrar_local, cadastrar_familia, cadast
 from .views import atualizar_usuario
 
 urlpatterns = [
+    path('listar_familias/', views.listar_familias, name='listar_familias'),
     path('listar_usuarios/', listar_usuarios, name='listar_usuarios'),
     path('cadastrar_usuario/', cadastrar_usuario, name='cadastrar_usuario'),
     path('desativar_usuario/', desativar_usuario, name='desativar_usuario'),

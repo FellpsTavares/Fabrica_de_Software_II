@@ -1,3 +1,11 @@
+.unidades-box {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .unidades-box {
+    margin-top: 54px;
+  }
+}
 /* Estilo exclusivo para tela de cadastro de unidade de medida */
 .unidades-container {
   min-height: 100vh;

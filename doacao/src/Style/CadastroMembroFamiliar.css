@@ -1,3 +1,11 @@
+.cadastro-membro-container {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .cadastro-membro-container {
+    margin-top: 54px;
+  }
+}
 /* Estilos exclusivos para CadastroMembroFamiliar */
 
 .cadastro-membro-container {

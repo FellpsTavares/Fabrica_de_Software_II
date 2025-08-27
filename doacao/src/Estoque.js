@@ -209,7 +209,7 @@ function Estoque() {
             </button>
           </div>
         </header>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90, background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
+  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 8, background: `url(${plano3}) center/cover no-repeat, #f5f5f5` }}>
           <div className="cadastro-box" style={{ maxWidth: 700, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
             <h2 style={{ color: '#2e8b57', marginBottom: 20, textAlign: 'center' }}>Movimentação de Estoque por Local</h2>
             <div style={{ margin: '32px 0 24px 0' }}>
@@ -266,7 +266,7 @@ function Estoque() {
           </button>
         </div>
       </header>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 90 }}>
+  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', marginTop: 64 }}>
         <div className="cadastro-box" style={{ maxWidth: 1100, width: '100%', background: 'rgba(198, 240, 221, 0.92)', borderRadius: 16, boxShadow: '0 4px 24px #0002', padding: 32, margin: 24 }}>
           <h2 style={{ color: '#2e8b57', marginBottom: 20 }}>Movimentação de Estoque do Seu Local</h2>
           <div style={{ marginBottom: 40 }}>

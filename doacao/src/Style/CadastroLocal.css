@@ -1,3 +1,11 @@
+.cadastro-local-container {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .cadastro-local-container {
+    margin-top: 54px;
+  }
+}
 /* Estrutura Principal */
 .cadastro-container {
   display: flex;

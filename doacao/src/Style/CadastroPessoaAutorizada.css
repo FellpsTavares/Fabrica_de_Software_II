@@ -1,3 +1,11 @@
+.cadastro-pessoa-autorizada-container {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .cadastro-pessoa-autorizada-container {
+    margin-top: 54px;
+  }
+}
 .cadastro-container {
   display: flex;
   justify-content: center;

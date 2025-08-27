@@ -1,3 +1,11 @@
+.home-container {
+  margin-top: 64px;
+}
+@media (max-width: 700px) {
+  .home-container {
+    margin-top: 54px;
+  }
+}
 /* Estilos gerais */
 .home-container {
   font-family: 'Arial', sans-serif;

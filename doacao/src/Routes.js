@@ -52,9 +52,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Login setIsAuthenticated={handleLoginSuccess} />} />
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/" replace />} />
         <Route path="/cadastro" element={
-          isAuthenticated && (tipoUsuario === 'MASTER' || tipoUsuario === 'COORDENADOR')
-            ? <CadastroUser />
-            : <Navigate to="/home" replace />
+          isAuthenticated ? <CadastroUser /> : <Navigate to="/" replace />
         } />
         <Route path="/CadastroFamilia" element={isAuthenticated ? <CadastroFamilia /> : <Navigate to="/" replace />} />
         <Route path="/CadastroLocal" element={isAuthenticated ? <CadastroLocal /> : <Navigate to="/" replace />} />

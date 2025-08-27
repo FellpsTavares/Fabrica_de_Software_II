@@ -1,3 +1,12 @@
+/* Reduzido para diminuir espaço em branco abaixo do header */
+.estoque-container {
+  margin-top: 24px;
+}
+@media (max-width: 700px) {
+  .estoque-container {
+    margin-top: 16px;
+  }
+}
 /* Estoque.css - estilos exclusivos para a tela de Estoque */
 
 .estoque-container {
@@ -7,7 +16,7 @@
   align-items: flex-start;
   justify-content: center;
   background: linear-gradient(120deg, #e6f7ee 0%, #f5fff8 100%);
-  padding-top: 0; /* Removido padding-top/margin-top para evitar espaço em branco */
+  padding-top: 0; 
 }
 
 .estoque-box {
